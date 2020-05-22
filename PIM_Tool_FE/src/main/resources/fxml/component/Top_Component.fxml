@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<GridPane prefHeight="76.0" prefWidth="600.0" >
+    <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="76.0" prefWidth="600.0"  xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+        <children>
+            <ImageView fitHeight="402.0" fitWidth="82.0" pickOnBounds="true" preserveRatio="true"/>
+            <Label prefHeight="400.0" prefWidth="321.0" text="Project Information Management"/>
+            <Label prefHeight="400.0" prefWidth="107.0" text="Language"/>
+            <Label prefHeight="400.0" prefWidth="107.0" text="Help"/>
+            <Label prefHeight="400.0" prefWidth="75.0" text="Log out"/>
+        </children>
+    </HBox>
+</GridPane>
+
