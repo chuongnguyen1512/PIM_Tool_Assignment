@@ -1,7 +1,9 @@
 package com.elca.vn.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -11,10 +13,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "PROJECT")
+@Table(name = "PIM_PROJECT")
 public class Project {
 
     @Id
@@ -22,10 +25,7 @@ public class Project {
     @Column(name = "ID", nullable = false, length = 19)
     private long projectID;
 
-    @Column(name = "GROUP_ID", nullable = false, length = 19)
-    private long groupID;
-
-    @Column(name = "PROJECT_NUMBER", nullable = false, length = 4)
+    @Column(name = "PROJECT_NUMBER", nullable = false, length = 4, unique = true)
     private int projectNumber;
 
     @Column(name = "NAME", nullable = false, length = 50)
@@ -43,16 +43,17 @@ public class Project {
     @Column(name = "END_DATE")
     private Date endDate;
 
-    @Column(name = "VERSION", nullable = false, length = 10)
+    @Column(name = "VERSION", nullable = false, length = 10, insertable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long version;
 
-    @ManyToOne
-    @JoinColumn(name = "group")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "GROUP_ID")
     private Group group;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "PROJECT_EMPLOYEE", joinColumns = {@JoinColumn(name = "PROJECT_ID")}, inverseJoinColumns = {@JoinColumn(name = "EMPLOYEE_ID")})
-    private Set<Employee> employees;
+    private Set<Employee> employees = new HashSet<>();
 
     public long getProjectID() {
         return projectID;
@@ -60,14 +61,6 @@ public class Project {
 
     public void setProjectID(long projectID) {
         this.projectID = projectID;
-    }
-
-    public long getGroupID() {
-        return groupID;
-    }
-
-    public void setGroupID(long groupID) {
-        this.groupID = groupID;
     }
 
     public int getProjectNumber() {

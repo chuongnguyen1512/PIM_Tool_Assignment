@@ -12,8 +12,8 @@
 
     <groupId>com.elca.vn</groupId>
     <artifactId>PIM_Tool_BE</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
 
     <properties>
         <java.version>1.8</java.version>
@@ -46,7 +46,6 @@
             <artifactId>protobuf-java</artifactId>
             <version>3.11.4</version>
         </dependency>
-
         <dependency>
             <groupId>org.jacpfx</groupId>
             <artifactId>jacpfx.API</artifactId>
@@ -72,6 +71,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -87,6 +90,18 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.elca.vn</groupId>
+            <artifactId>PIM_Tool_Repository</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -139,6 +154,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

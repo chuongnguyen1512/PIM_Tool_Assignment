@@ -1,17 +1,20 @@
 package com.elca.vn.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "GROUP")
+@Table(name = "PIM_GROUP")
 public class Group {
 
     @Id
@@ -19,16 +22,14 @@ public class Group {
     @Column(name = "ID", nullable = false, length = 19)
     private long groupID;
 
-    @Column(name = "GROUP_LEADER_ID", nullable = false, length = 19)
-    private long employeeID;
-
-    @Column(name = "VERSION", nullable = false, length = 10)
+    @Column(name = "VERSION", nullable = false, length = 10, insertable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long version;
 
-    @OneToMany(mappedBy = "GROUP_ID")
-    private List<Project> projects;
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Project> projects = new HashSet<>();
 
-    @OneToOne(mappedBy = "group")
+    @OneToOne(mappedBy = "emp_group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Employee employee;
 
     public long getGroupID() {
@@ -39,14 +40,6 @@ public class Group {
         this.groupID = groupID;
     }
 
-    public long getEmployeeID() {
-        return employeeID;
-    }
-
-    public void setEmployeeID(long employeeID) {
-        this.employeeID = employeeID;
-    }
-
     public long getVersion() {
         return version;
     }
@@ -55,11 +48,19 @@ public class Group {
         this.version = version;
     }
 
-    public List<Project> getProjects() {
+    public Set<Project> getProjects() {
         return projects;
     }
 
-    public void setProjects(List<Project> projects) {
+    public void setProjects(Set<Project> projects) {
         this.projects = projects;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 }
