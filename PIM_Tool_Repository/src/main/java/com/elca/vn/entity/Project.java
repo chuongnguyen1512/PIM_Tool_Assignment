@@ -43,11 +43,11 @@ public class Project {
     @Column(name = "END_DATE")
     private Date endDate;
 
-    @Column(name = "VERSION", nullable = false, length = 10, insertable = false, updatable = false)
+    @Column(name = "VERSION", nullable = false, length = 10)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long version;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "GROUP_ID")
     private Group group;
 
