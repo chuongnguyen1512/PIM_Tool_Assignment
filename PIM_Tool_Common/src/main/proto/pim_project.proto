@@ -2,18 +2,30 @@ syntax = "proto3";
 
 option java_multiple_files = true;
 
-package com.elca.vn.model;
+package com.elca.vn.proto.model;
 option java_outer_classname = "ProjectProto";
 option objc_class_prefix = "RTG";
 
 import "google/protobuf/timestamp.proto";
+
+message PimProjectPersistRequest {
+  string transactionID = 1;
+  PimProject project = 2;
+}
+
+message PimProjectPersistResponse {
+  string transactionID = 1;
+  string bundleID = 2;
+  bool isSuccess = 3;
+  PimProject project = 4;
+}
 
 message PimProject {
   int32 projectNumber = 2;
   string projectName = 3;
   string customer = 4;
   int64 groupID = 5;
-  repeated int64 memberVISAs = 6;
+  repeated string memberVISAs = 6;
   Status status = 7;
   google.protobuf.Timestamp startDate = 8;
   google.protobuf.Timestamp endDate = 9;
