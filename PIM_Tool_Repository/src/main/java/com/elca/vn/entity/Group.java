@@ -22,7 +22,10 @@ public class Group {
     @Column(name = "ID", nullable = false, length = 19)
     private long groupID;
 
-    @Column(name = "VERSION", nullable = false, length = 10, insertable = false, updatable = false)
+    @Column(name = "GROUP_NAME", nullable = false, length = 50, unique = true)
+    private String groupName;
+
+    @Column(name = "VERSION", nullable = false, length = 10)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long version;
 
@@ -62,5 +65,13 @@ public class Group {
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 }

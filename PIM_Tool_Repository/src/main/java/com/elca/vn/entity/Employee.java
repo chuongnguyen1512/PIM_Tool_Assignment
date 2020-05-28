@@ -36,14 +36,14 @@ public class Employee {
     @Column(name = "BIRTH_DATE", nullable = false)
     private Date birthDate;
 
-    @Column(name = "VERSION", nullable = false, length = 10, insertable = false, updatable = false)
+    @Column(name = "VERSION", nullable = false, length = 10)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long version;
 
-    @ManyToMany(mappedBy = "employees", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "employees", fetch = FetchType.LAZY)
     private Set<Project> projects = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "GROUP_LEADER_ID")
     private Group emp_group;
 
