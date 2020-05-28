@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  */
 @Configuration
 @Component
-public class UIConfiguration {
+public class JacpFXConfiguration {
 
     // Workbench
     public static final String PIM_TOOL_WORKBENCH_ID = "Pim_Workbench_ID";
@@ -42,11 +42,17 @@ public class UIConfiguration {
     public static final String PROJECT_LIST_FRAGMENT_ID = "Project_List_Fragment_ID";
     public static final String PROJECT_LIST_FRAGMENT_FXML_URL = "/fxml/fragment/Project_List_Fragment.fxml";
 
+    public static final String INTERNAL_ERROR_FRAGMENT_ID = "Internal_Error_Fragment_ID";
+    public static final String INTERNAL_ERROR_FRAGMENT_FXML_URL = "/fxml/fragment/Internal_Error_Fragment.fxml";
+
     // Command message event
     public static final String OPEN_PROJECT_FORM_MESSAGE = "OPEN_PROJECT_FORM_MESSAGE";
     public static final String OPEN_PROJECT_LIST_MESSAGE = "OPEN_PROJECT_LIST_MESSAGE";
+    public static final String OPEN_INTERNAL_ERROR_MESSAGE = "OPEN_INTERNAL_ERROR_MESSAGE";
+    public static final String CLOSE_CHILD_COMPONENTS_MESSAGE = "CLOSE_CHILD_COMPONENTS_MESSAGE";
 
     // Resource
     public static final String DEFAULT_RESOURCE_BUNDLE = "bundles.language";
+    public static final String SEPARATOR_CHARACTER = ",";
 
 }

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_outer_classname = "BaseGroupServiceProto";
+option objc_class_prefix = "RTG";
+
+package com.elca.vn.proto.service;
+
+import "pim_group.proto";
+
+service BaseGroupService {
+
+  //Stream server group data
+  rpc streamGroupData(com.elca.vn.proto.model.PimGroupRequest) returns (stream com.elca.vn.proto.model.PimGroupResponse) {}
+}

@@ -2,8 +2,8 @@ package com.elca.vn.perspective;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import org.jacpfx.api.annotations.lifecycle.PostConstruct;
 import org.jacpfx.api.annotations.perspective.Perspective;
 import org.jacpfx.api.message.Message;
@@ -13,16 +13,16 @@ import org.jacpfx.rcp.perspective.FXPerspective;
 
 import java.util.ResourceBundle;
 
-import static com.elca.vn.configuration.UIConfiguration.CENTER_COMPONENT_ID;
-import static com.elca.vn.configuration.UIConfiguration.CENTER_COMPONENT_TARGET_LAYOUT_ID;
-import static com.elca.vn.configuration.UIConfiguration.DEFAULT_RESOURCE_BUNDLE;
-import static com.elca.vn.configuration.UIConfiguration.LEFT_COMPONENT_ID;
-import static com.elca.vn.configuration.UIConfiguration.LEFT_COMPONENT_TARGET_LAYOUT_ID;
-import static com.elca.vn.configuration.UIConfiguration.MAIN_PERSPECTIVE_FXML_URL;
-import static com.elca.vn.configuration.UIConfiguration.MAIN_PERSPECTIVE_ID;
-import static com.elca.vn.configuration.UIConfiguration.MAIN_PERSPECTIVE_NAME;
-import static com.elca.vn.configuration.UIConfiguration.TOP_COMPONENT_ID;
-import static com.elca.vn.configuration.UIConfiguration.TOP_COMPONENT_TARGET_LAYOUT_ID;
+import static com.elca.vn.configuration.JacpFXConfiguration.CENTER_COMPONENT_ID;
+import static com.elca.vn.configuration.JacpFXConfiguration.CENTER_COMPONENT_TARGET_LAYOUT_ID;
+import static com.elca.vn.configuration.JacpFXConfiguration.DEFAULT_RESOURCE_BUNDLE;
+import static com.elca.vn.configuration.JacpFXConfiguration.LEFT_COMPONENT_ID;
+import static com.elca.vn.configuration.JacpFXConfiguration.LEFT_COMPONENT_TARGET_LAYOUT_ID;
+import static com.elca.vn.configuration.JacpFXConfiguration.MAIN_PERSPECTIVE_FXML_URL;
+import static com.elca.vn.configuration.JacpFXConfiguration.MAIN_PERSPECTIVE_ID;
+import static com.elca.vn.configuration.JacpFXConfiguration.MAIN_PERSPECTIVE_NAME;
+import static com.elca.vn.configuration.JacpFXConfiguration.TOP_COMPONENT_ID;
+import static com.elca.vn.configuration.JacpFXConfiguration.TOP_COMPONENT_TARGET_LAYOUT_ID;
 
 /**
  * Main perspective layout for application
@@ -42,13 +42,13 @@ public class MainPerspective implements FXPerspective {
     private BorderPane mainPane;
 
     @FXML
-    private GridPane topGridPane;
+    private AnchorPane topPane;
 
     @FXML
-    private GridPane leftGridPane;
+    private AnchorPane leftPane;
 
     @FXML
-    private GridPane centerGridPane;
+    private AnchorPane centerPane;
 
     @Override
     public void handlePerspective(Message<Event, Object> message, PerspectiveLayout perspectiveLayout) {
@@ -59,8 +59,8 @@ public class MainPerspective implements FXPerspective {
     public void onStartPerspective(final PerspectiveLayout perspectiveLayout, final FXComponentLayout layout,
                                    final ResourceBundle resourceBundle) {
         perspectiveLayout.registerRootComponent(mainPane);
-        perspectiveLayout.registerTargetLayoutComponent(TOP_COMPONENT_TARGET_LAYOUT_ID, topGridPane);
-        perspectiveLayout.registerTargetLayoutComponent(LEFT_COMPONENT_TARGET_LAYOUT_ID, leftGridPane);
-        perspectiveLayout.registerTargetLayoutComponent(CENTER_COMPONENT_TARGET_LAYOUT_ID, centerGridPane);
+        perspectiveLayout.registerTargetLayoutComponent(TOP_COMPONENT_TARGET_LAYOUT_ID, topPane);
+        perspectiveLayout.registerTargetLayoutComponent(LEFT_COMPONENT_TARGET_LAYOUT_ID, leftPane);
+        perspectiveLayout.registerTargetLayoutComponent(CENTER_COMPONENT_TARGET_LAYOUT_ID, centerPane);
     }
 }

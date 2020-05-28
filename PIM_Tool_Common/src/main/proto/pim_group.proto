@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package com.elca.vn.proto.model;
+
+option java_outer_classname = "GroupProto";
+option objc_class_prefix = "RTG";
+
+message PimGroupRequest {
+  string transactionID = 1;
+  int64 groupID = 2;
+}
+
+message PimGroupResponse {
+  string transactionID = 1;
+  string bundleID = 2;
+  bool isSuccess = 3;
+  PimGroup group = 4;
+}
+
+message PimGroup {
+  int64 groupID = 1;
+  string groupName = 2;
+}

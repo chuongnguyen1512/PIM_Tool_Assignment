@@ -11,9 +11,9 @@ import org.jacpfx.api.util.ToolbarPosition;
 import org.jacpfx.rcp.componentLayout.FXComponentLayout;
 import org.jacpfx.rcp.workbench.FXWorkbench;
 
-import static com.elca.vn.configuration.UIConfiguration.MAIN_PERSPECTIVE_ID;
-import static com.elca.vn.configuration.UIConfiguration.PIM_TOOL_WORKBENCH_ID;
-import static com.elca.vn.configuration.UIConfiguration.PIM_TOOL_WORKBENCH_NAME;
+import static com.elca.vn.configuration.JacpFXConfiguration.MAIN_PERSPECTIVE_ID;
+import static com.elca.vn.configuration.JacpFXConfiguration.PIM_TOOL_WORKBENCH_ID;
+import static com.elca.vn.configuration.JacpFXConfiguration.PIM_TOOL_WORKBENCH_NAME;
 
 /**
  * Workbench of PIM Tool UI which also is present for main window application
@@ -43,7 +43,7 @@ public class PIMToolWorkbench implements FXWorkbench {
      */
     @Override
     public void handleInitialLayout(Message<Event, Object> action, WorkbenchLayout<Node> layout, Stage stage) {
-        layout.setWorkbenchXYSize(1024, 768);
+        layout.setWorkbenchXYSize(1600, 800);
         layout.registerToolBar(ToolbarPosition.NORTH);
         layout.setStyle(StageStyle.DECORATED);
         stage.setTitle("PIM Tool");

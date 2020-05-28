@@ -1,0 +1,23 @@
+.root{
+    -fx-font-size: 14;
+    -fx-background-color: transparent;
+}
+
+#btnOpenProject{
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+#btnOpenProject:focused {
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+#btnOpenProject:pressed {
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
