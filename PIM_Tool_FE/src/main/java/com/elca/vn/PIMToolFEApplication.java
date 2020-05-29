@@ -31,6 +31,9 @@ public class PIMToolFEApplication extends AFXSpringJavaConfigLauncher {
     @Override
     protected void postInit(Stage stage) {
         stage.getScene().getStylesheets()
-                .addAll(PIMToolFEApplication.class.getResource("/styles/pim_common.css").toExternalForm());
+                .addAll(this.getClass().getResource("/styles/pim_common.css").toExternalForm(),
+                        this.getClass().getResource("/styles/left_component.css").toExternalForm(),
+                        this.getClass().getResource("/styles/project_form.css").toExternalForm(),
+                        this.getClass().getResource("/styles/project_list.css").toExternalForm());
     }
 }

@@ -123,7 +123,7 @@ public class LeftComponent implements FXComponent, Initializable {
 
     private void mouseEventForButton(ButtonBase btn, EventType mouseEvent, boolean isParentButton) {
         if (mouseEvent.equals(MouseEvent.MOUSE_ENTERED)) {
-            btn.getScene().setCursor(Cursor.HAND);
+//            btn.getScene().setCursor(Cursor.HAND);
             btn.setTextFill(Paint.valueOf(STYLE_FONT_COLOR_WHEN_CURSOR_POINTING));
             if (isParentButton) {
                 btn.setFont(new Font("System Bold", 18));
@@ -132,7 +132,7 @@ public class LeftComponent implements FXComponent, Initializable {
             }
         }
         if (mouseEvent.equals(MouseEvent.MOUSE_EXITED)) {
-            btn.getScene().setCursor(null);
+//            btn.getScene().setCursor(null);
             if (isParentButton) {
                 btn.setFont(new Font("System", 18));
             } else {

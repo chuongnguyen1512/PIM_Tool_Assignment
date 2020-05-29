@@ -1,9 +1,8 @@
 package com.elca.vn.service;
 
 import com.elca.vn.entity.Group;
+import com.elca.vn.entity.Project;
 import com.elca.vn.repository.GroupRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +30,7 @@ public class PimGroupServiceImpl implements BasePimDataService<Group> {
     }
 
     @Override
-    public List<Group> queryData(String id) {
+    public Group queryData(String id) {
         return null;
     }
 
@@ -42,6 +41,26 @@ public class PimGroupServiceImpl implements BasePimDataService<Group> {
         if (Objects.nonNull(data)) {
             return data.iterator();
         }
+        return null;
+    }
+
+    @Override
+    public long getTotalDataSize() {
+        return 0;
+    }
+
+    @Override
+    public long getTotalDataSize(String... contentSearch) {
+        return 0;
+    }
+
+    @Override
+    public List<Group> findDataWithPaging(int indexPage, String... contentSearch) {
+        return null;
+    }
+
+    @Override
+    public List<Group> findAllDataWithPaging(int indexPage) {
         return null;
     }
 }

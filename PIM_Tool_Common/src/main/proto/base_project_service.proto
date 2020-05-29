@@ -10,9 +10,12 @@ import "pim_project.proto";
 
 service BaseProjectService {
 
-  //Insert
-  rpc insertNewProject(com.elca.vn.proto.model.PimProjectPersistRequest) returns (com.elca.vn.proto.model.PimProjectPersistResponse) {}
+  // Saving project data
+  rpc savingNewProject(com.elca.vn.proto.model.PimProjectPersistRequest) returns (com.elca.vn.proto.model.PimProjectPersistResponse) {}
 
-  //Update
-  rpc updateProject(com.elca.vn.proto.model.PimProjectPersistRequest) returns (com.elca.vn.proto.model.PimProjectPersistResponse) {}
+  // Get projects with paging
+  rpc getProjects(com.elca.vn.proto.model.PimProjectQueryRequest) returns (com.elca.vn.proto.model.PimProjectQueryResponse) {}
+
+  // Counting projects number
+  rpc getTotalNumOfProjects(com.elca.vn.proto.model.PimProjectCountingRequest) returns (com.elca.vn.proto.model.PimProjectCountingResponse) {}
 }

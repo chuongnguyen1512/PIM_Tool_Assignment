@@ -2,7 +2,6 @@ package com.elca.vn.fragment;
 
 import com.elca.vn.configuration.JacpFXConfiguration;
 import com.elca.vn.converter.ChoiceBoxGroupStringConverter;
-import com.elca.vn.converter.ChoiceBoxStatusStringConverter;
 import com.elca.vn.model.BaseWorker;
 import com.elca.vn.model.GUIStatusModel;
 import com.elca.vn.proto.model.PimGroup;
@@ -12,21 +11,17 @@ import com.elca.vn.proto.model.PimProject;
 import com.elca.vn.proto.model.PimProjectPersistRequest;
 import com.elca.vn.proto.model.PimProjectPersistResponse;
 import com.elca.vn.proto.model.ProcessingStatus;
-import com.elca.vn.proto.model.Status;
 import com.elca.vn.service.GroupGRPCService;
 import com.elca.vn.service.ProjectGRPCService;
 import com.elca.vn.util.GuiUtils;
 import io.grpc.ManagedChannel;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -36,22 +31,19 @@ import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
-import org.jacpfx.rcp.worker.TearDownWorker;
-import org.springframework.util.CollectionUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.elca.vn.configuration.JacpFXConfiguration.DEFAULT_RESOURCE_BUNDLE;
 import static com.elca.vn.configuration.JacpFXConfiguration.INTERNAL_ERROR_FRAGMENT_ID;
-import static com.elca.vn.configuration.JacpFXConfiguration.OPEN_INTERNAL_ERROR_MESSAGE;
 import static com.elca.vn.configuration.JacpFXConfiguration.OPEN_PROJECT_LIST_MESSAGE;
 import static com.elca.vn.configuration.JacpFXConfiguration.PROJECT_FORM_FRAGMENT_FXML_URL;
 import static com.elca.vn.configuration.JacpFXConfiguration.PROJECT_FORM_FRAGMENT_ID;
@@ -67,7 +59,7 @@ import static com.elca.vn.constant.StylesheetConstant.STYLE_BORDER_FAILED;
         viewLocation = PROJECT_FORM_FRAGMENT_FXML_URL,
         scope = Scope.PROTOTYPE,
         resourceBundleLocation = DEFAULT_RESOURCE_BUNDLE)
-public class ProjectFormFragment implements Initializable {
+public class ProjectFormFragment implements BaseFragment, Initializable {
 
     private boolean isUpdateForm = false;
 
@@ -116,6 +108,7 @@ public class ProjectFormFragment implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         loadDataForGroupChoiceBox();
+        loadStatusData(cbStatus);
         tfProjectNum.setOnKeyReleased(event -> tfProjectNum.setStyle(null));
         tfProjectName.setOnKeyReleased(event -> tfProjectName.setStyle(null));
         tfCustomer.setOnKeyReleased(event -> tfCustomer.setStyle(null));
@@ -125,23 +118,20 @@ public class ProjectFormFragment implements Initializable {
                 dpStartDate.setStyle(null);
             }
         });
-        cbStatus.setConverter(new ChoiceBoxStatusStringConverter());
-        cbStatus.setItems(FXCollections.observableList(Arrays.asList(GUIStatusModel.values())));
-        cbStatus.getSelectionModel().selectFirst();
     }
 
     @FXML
     private void submitProject() {
         lbCustomerValidation.setText(StringUtils.EMPTY);
         lbProjectNumValidation.setText(StringUtils.EMPTY);
-        try {
-            ProcessingStatus status = ProcessingStatus.INSERT;
 
+        grpcHandling(context, () -> {
+            ProcessingStatus status = ProcessingStatus.INSERT;
             if (isUpdateForm) {
                 status = ProcessingStatus.UPDATE;
             }
 
-            if (isInvalidForm()) {
+            if (isInvalidForm(STYLE_BORDER_FAILED, tfProjectName, tfCustomer, tfProjectNum, dpStartDate, cbStatus, cbGroup)) {
                 lbFieldValidation.setVisible(true);
                 return;
             }
@@ -149,31 +139,13 @@ public class ProjectFormFragment implements Initializable {
             PimProjectPersistRequest projectRequest = collectGUIData(status);
             ProjectGRPCService projectGRPCService = ProjectGRPCService.getInstance("localhost", 8084);
             PimProjectPersistResponse projectResponse = projectGRPCService.sendingRPCRequest(projectRequest);
-
             verifyResponse(projectResponse);
-
-        } catch (Exception e) {
-            context.send(JacpFXConfiguration.CENTER_COMPONENT_ID, OPEN_INTERNAL_ERROR_MESSAGE);
-        }
+        });
     }
 
     @FXML
     private void cancelProject() {
-        tfProjectName.setText(StringUtils.EMPTY);
-        tfCustomer.setText(StringUtils.EMPTY);
-        tfProjectNum.setText(StringUtils.EMPTY);
-        tfMember.setText(StringUtils.EMPTY);
-        cbStatus.getSelectionModel().selectFirst();
-        cbGroup.getSelectionModel().selectFirst();
-        dpStartDate.setValue(null);
-        dpEndDate.setValue(null);
-        lbCustomerValidation.setText(StringUtils.EMPTY);
-        lbProjectNumValidation.setText(StringUtils.EMPTY);
-    }
-
-    private boolean isInvalidForm() {
-        List<Control> inputFormComponents = Arrays.asList(tfProjectName, tfCustomer, tfProjectNum, dpStartDate, cbStatus, cbGroup);
-        return GuiUtils.isEmptyGUIData(inputFormComponents, STYLE_BORDER_FAILED);
+        cleanUpInputForm(tfProjectNum, tfProjectName, tfCustomer, tfMember, cbStatus, cbGroup, dpStartDate, dpEndDate, lbCustomerValidation, lbProjectNumValidation);
     }
 
     private PimProjectPersistRequest collectGUIData(ProcessingStatus processingStatus) {
@@ -211,6 +183,7 @@ public class ProjectFormFragment implements Initializable {
 
     private void verifyResponse(PimProjectPersistResponse projectResponse) {
         if (Objects.isNull(projectResponse)) {
+            // If fail, redirect to internal error page
             context.send(JacpFXConfiguration.CENTER_COMPONENT_ID, INTERNAL_ERROR_FRAGMENT_ID);
         }
 
@@ -220,14 +193,17 @@ public class ProjectFormFragment implements Initializable {
         }
 
         String bundleID = projectResponse.getBundleID();
-        if (StringUtils.equalsIgnoreCase(bundleID, PROJECT_EXISTING_SYSTEM_MSG_BUNDLE_ID)) {
-            lbProjectNumValidation.setText(GuiUtils.getAndResolveBundleResource(bundle, bundleID));
-            lbProjectNumValidation.setVisible(true);
-        }
-
-        if (StringUtils.equalsIgnoreCase(bundleID, EMPLOYEES_NOT_EXIST_SYSTEM_MSG_BUNDLE_ID)) {
-            lbCustomerValidation.setText(GuiUtils.getAndResolveBundleResource(bundle, bundleID, tfCustomer.getText()));
-            lbCustomerValidation.setVisible(true);
+        switch (bundleID) {
+            case PROJECT_EXISTING_SYSTEM_MSG_BUNDLE_ID:
+                lbProjectNumValidation.setText(GuiUtils.getAndResolveBundleResource(bundle, bundleID));
+                lbProjectNumValidation.setVisible(true);
+                break;
+            case EMPLOYEES_NOT_EXIST_SYSTEM_MSG_BUNDLE_ID:
+                lbCustomerValidation.setText(GuiUtils.getAndResolveBundleResource(bundle, bundleID, tfCustomer.getText()));
+                lbCustomerValidation.setVisible(true);
+                break;
+            default:
+                break;
         }
     }
 
@@ -276,6 +252,7 @@ public class ProjectFormFragment implements Initializable {
             }
             return groupList;
         } finally {
+            // Streaming so have to handle shutdown channel outside
             ManagedChannel channel = baseGRPCService.getChannel();
             if (Objects.nonNull(channel) && !channel.isShutdown()) {
                 channel.shutdown();

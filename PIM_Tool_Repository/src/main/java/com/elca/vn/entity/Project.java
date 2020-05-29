@@ -7,6 +7,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -17,7 +18,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "PIM_PROJECT")
+@Table(name = "PIM_PROJECT",
+        indexes = {
+                @Index(name = "INDEX_PROJECT_NUM", columnList = "PROJECT_NUMBER", unique = true),
+                @Index(name = "INDEX_COMBINED_PROJECT", columnList = "PROJECT_NUMBER, STATUS", unique = true)
+        })
 public class Project {
 
     @Id

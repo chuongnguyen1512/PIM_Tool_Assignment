@@ -8,7 +8,10 @@ import io.grpc.stub.AbstractStub;
 import java.util.Iterator;
 import java.util.Objects;
 
-public abstract class BaseGRPCService<I, O> {
+/**
+ * Default GRPC client service building skeleton for sending request
+ */
+public abstract class BaseGRPCService {
 
     protected String serverName;
     protected int port;
@@ -19,11 +22,18 @@ public abstract class BaseGRPCService<I, O> {
         this.port = port;
     }
 
-    public O sendingRPCRequest(I object) throws StatusRuntimeException {
+    /**
+     * Sending RPC Request
+     *
+     * @param request RPC Request
+     * @return RPC Response
+     * @throws StatusRuntimeException
+     */
+    public <I, O> O sendingRPCRequest(I request) throws StatusRuntimeException {
         try {
             channel = ManagedChannelBuilder.forAddress(serverName, port).usePlaintext().build();
             AbstractStub stub = initStub(channel);
-            return callRemoteMethod(object, stub);
+            return callingRemoteMethod(request, stub);
         } finally {
             if (Objects.nonNull(channel) && !channel.isShutdown()) {
                 channel.shutdown();
@@ -31,18 +41,25 @@ public abstract class BaseGRPCService<I, O> {
         }
     }
 
-    public Iterator<O> sendingRPCRequestWithStreamingResponse(I object) throws StatusRuntimeException {
+    /**
+     * Sending RPC request and server will stream response
+     *
+     * @param request RPC request
+     * @return iterator of response
+     * @throws StatusRuntimeException
+     */
+    public <I, O> Iterator<O> sendingRPCRequestWithStreamingResponse(I request) throws StatusRuntimeException {
         channel = ManagedChannelBuilder.forAddress(serverName, port).usePlaintext().build();
         AbstractStub stub = initStub(channel);
-        return callRemoteMethodWithStreamResponse(object, stub);
         // Method caller must handle shutdown channel after streaming all of data
+        return callingRemoteMethodWithServerStreaming(request, stub);
     }
 
+    protected abstract <I, O> O callingRemoteMethod(I request, AbstractStub stub);
+
+    protected abstract <I, O> Iterator<O> callingRemoteMethodWithServerStreaming(I request, AbstractStub stub);
+
     protected abstract AbstractStub initStub(ManagedChannel channel);
-
-    protected abstract O callRemoteMethod(I object, AbstractStub stub);
-
-    protected abstract Iterator<O> callRemoteMethodWithStreamResponse(I object, AbstractStub stub);
 
     public String getServerName() {
         return serverName;

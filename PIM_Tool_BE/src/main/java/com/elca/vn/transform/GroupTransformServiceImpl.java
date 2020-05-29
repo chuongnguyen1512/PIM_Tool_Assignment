@@ -2,12 +2,14 @@ package com.elca.vn.transform;
 
 import com.elca.vn.entity.Group;
 import com.elca.vn.proto.model.PimGroup;
+import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 /**
  * Transform service for pair models {@link PimGroup} and {@link Group}
  */
+@Service
 public class GroupTransformServiceImpl implements BaseTransformService<PimGroup, Group> {
 
     /**

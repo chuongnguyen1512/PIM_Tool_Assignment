@@ -23,10 +23,10 @@ import static com.elca.vn.config.PIMToolBEConfiguration.BEAN_GROUP_TRANSFORM_SER
 import static com.elca.vn.constant.BundleConstant.INTERNAL_ERROR_MSG_BUNDLE_ID;
 
 /**
- *
+ * GRPC Service for handling RPC request for Group data
  */
 @GRpcService
-public class GroupGRPCService extends BaseGroupServiceGrpc.BaseGroupServiceImplBase {
+public class GroupGRPCService extends BaseGroupServiceGrpc.BaseGroupServiceImplBase implements GRPCBaseService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProjectGRPCService.class);
 
     private BasePimDataService basePimDataService;
@@ -39,6 +39,12 @@ public class GroupGRPCService extends BaseGroupServiceGrpc.BaseGroupServiceImplB
         this.baseTransformService = baseTransformService;
     }
 
+    /**
+     * Streaming group data
+     *
+     * @param request rpc request
+     * @param responseObserver response observer
+     */
     @Override
     public void streamGroupData(PimGroupRequest request, StreamObserver<PimGroupResponse> responseObserver) {
         if (Objects.isNull(request)) {
@@ -46,19 +52,25 @@ public class GroupGRPCService extends BaseGroupServiceGrpc.BaseGroupServiceImplB
             responseObserver.onError(ExceptionUtils.buildInternalErrorStatusException(INTERNAL_ERROR_MSG_BUNDLE_ID));
         }
         String transactionID = request.getTransactionID();
-        try {
+
+        receiveAndHandlingRPCRequest(transactionID, responseObserver, () -> {
             Iterator<Group> data = basePimDataService.getData();
 
             // if stream is null, return response immediately
             if (Objects.isNull(data)) {
-                responseObserver.onNext(
-                        PimGroupResponse.newBuilder()
-                                .setTransactionID(transactionID)
-                                .setIsSuccess(true)
-                                .build());
+                responseObserver.onNext(PimGroupResponse.newBuilder()
+                        .setTransactionID(transactionID)
+                        .setIsSuccess(true)
+                        .build());
                 responseObserver.onCompleted();
             }
+            iteratorGroupData(data, responseObserver, transactionID);
+        });
 
+    }
+
+    private void iteratorGroupData(Iterator<Group> data, StreamObserver responseObserver, String transactionID) {
+        try {
             while (data.hasNext()) {
                 PimGroup pimGroup = (PimGroup) baseTransformService.transformFromDesToSource(data.next());
                 if (Objects.isNull(pimGroup)) {
@@ -70,11 +82,8 @@ public class GroupGRPCService extends BaseGroupServiceGrpc.BaseGroupServiceImplB
                         .setIsSuccess(true)
                         .build());
             }
+        } finally {
             responseObserver.onCompleted();
-        } catch (Exception e) {
-            LOGGER.error("There's an exception while streaming group data", e);
-            ExceptionUtils.buildInternalErrorStatusException(INTERNAL_ERROR_MSG_BUNDLE_ID);
         }
-
     }
 }

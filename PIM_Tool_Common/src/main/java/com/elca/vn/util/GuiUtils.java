@@ -5,6 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -103,6 +104,29 @@ public class GuiUtils {
     }
 
     /**
+     * Cleaning up input components
+     *
+     * @param controls list of input components
+     */
+    public static void cleanUpDataForm(Control... controls) {
+        for (Control control : controls) {
+            if (isLabel(control)) {
+                ((Label) control).setText(StringUtils.EMPTY);
+            }
+            if (isTextField(control)) {
+                ((TextField) control).setText(StringUtils.EMPTY);
+            }
+            if (isChoiceBox(control)) {
+                ((ChoiceBox) control).getSelectionModel().selectFirst();
+
+            }
+            if (isDatePicker(control)) {
+                ((DatePicker) control).setValue(null);
+            }
+        }
+    }
+
+    /**
      * Verify GUI data is invalid or not
      *
      * @param controls
@@ -127,7 +151,7 @@ public class GuiUtils {
      * @return
      */
     private static boolean isInvalidTextField(Control control) {
-        return Objects.nonNull(control) && control instanceof TextField && StringUtils.isBlank(((TextField) control).getText());
+        return isTextField(control) && StringUtils.isBlank(((TextField) control).getText());
     }
 
     /**
@@ -137,7 +161,7 @@ public class GuiUtils {
      * @return
      */
     private static boolean isInvalidChoiceBox(Control control) {
-        return Objects.nonNull(control) && control instanceof ChoiceBox && Objects.isNull(((ChoiceBox) control).getSelectionModel().isEmpty());
+        return isChoiceBox(control) && Objects.isNull(((ChoiceBox) control).getSelectionModel().isEmpty());
     }
 
     /**
@@ -147,6 +171,22 @@ public class GuiUtils {
      * @return
      */
     private static boolean isInvalidDatePicker(Control control) {
-        return Objects.nonNull(control) && control instanceof DatePicker && Objects.isNull(((DatePicker) control).getValue());
+        return isDatePicker(control) && Objects.isNull(((DatePicker) control).getValue());
+    }
+
+    private static boolean isLabel(Control control) {
+        return Objects.nonNull(control) && control instanceof Label;
+    }
+
+    private static boolean isTextField(Control control) {
+        return Objects.nonNull(control) && control instanceof TextField;
+    }
+
+    private static boolean isChoiceBox(Control control) {
+        return Objects.nonNull(control) && control instanceof ChoiceBox;
+    }
+
+    private static boolean isDatePicker(Control control) {
+        return Objects.nonNull(control) && control instanceof DatePicker;
     }
 }

@@ -12,11 +12,11 @@ public class ChoiceBoxStatusStringConverter extends StringConverter<GUIStatusMod
         if (Objects.isNull(object)) {
             return null;
         }
-        return object.getStatusValue();
+        return object.statusValue;
     }
 
     @Override
     public GUIStatusModel fromString(String string) {
-        return GUIStatusModel.valueOf(string);
+        return GUIStatusModel.valueOfStatusValue(string);
     }
 }

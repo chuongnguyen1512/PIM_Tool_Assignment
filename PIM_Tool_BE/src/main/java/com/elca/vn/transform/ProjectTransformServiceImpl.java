@@ -4,8 +4,7 @@ import com.elca.vn.entity.Employee;
 import com.elca.vn.entity.Project;
 import com.elca.vn.proto.model.PimProject;
 import com.elca.vn.proto.model.Status;
-import com.elca.vn.repository.ProjectRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.elca.vn.util.PIMToolUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -54,7 +53,10 @@ public class ProjectTransformServiceImpl implements BaseTransformService<PimProj
         return PimProject.newBuilder()
                 .setProjectNumber(desProject.getProjectNumber())
                 .setProjectName(desProject.getName())
+                .setCustomer(desProject.getCustomer())
                 .setStatus(Status.valueOf(desProject.getStatus()))
+                .setStartDate(PIMToolUtils.convertToTimestamp(desProject.getStartDate()))
+                .setEndDate(PIMToolUtils.convertToTimestamp(desProject.getEndDate()))
                 .build();
     }
 

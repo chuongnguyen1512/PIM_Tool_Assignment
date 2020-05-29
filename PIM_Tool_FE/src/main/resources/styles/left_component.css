@@ -1,0 +1,19 @@
+#vboxChildNew > .button,
+#boxLeft > .button{
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+
+#btnNew:hover,
+#btnOpenProject:hover{
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-text-fill: #49a4ff;
+
+}
+
+#vboxChildNew > .button:hover{
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}

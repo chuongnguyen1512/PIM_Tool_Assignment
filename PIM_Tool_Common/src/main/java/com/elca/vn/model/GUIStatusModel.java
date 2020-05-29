@@ -2,6 +2,9 @@ package com.elca.vn.model;
 
 import com.elca.vn.proto.model.Status;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Model to transform between GUI value and proto object
  */
@@ -12,33 +15,29 @@ public enum GUIStatusModel {
     INPROGRESS(Status.INO, "In Progress"),
     FINISHED(Status.FIN, "Finished");
 
-    private Status status;
-    private String statusValue;
+    public final Status status;
+    public final String statusValue;
 
-    public Status getStatus() {
-        return status;
-    }
+    private static final Map<Status, GUIStatusModel> BY_STATUS = new HashMap<>();
+    private static final Map<String, GUIStatusModel> BY_STRING = new HashMap<>();
 
-    public String getStatusValue() {
-        return statusValue;
-    }
-
-    public boolean isEqual(Status status) {
-        if (this.status.equals(status)) {
-            return true;
+    static {
+        for (GUIStatusModel e : values()) {
+            BY_STATUS.put(e.status, e);
+            BY_STRING.put(e.statusValue, e);
         }
-        return false;
-    }
-
-    public boolean isEqual(String statusValue) {
-        if (this.statusValue.equals(statusValue)) {
-            return true;
-        }
-        return false;
     }
 
     private GUIStatusModel(Status status, String statusValue) {
         this.status = status;
         this.statusValue = statusValue;
+    }
+
+    public static GUIStatusModel valueOfStatus(Status status) {
+        return BY_STATUS.get(status);
+    }
+
+    public static GUIStatusModel valueOfStatusValue(String statusValue) {
+        return BY_STRING.get(statusValue);
     }
 }

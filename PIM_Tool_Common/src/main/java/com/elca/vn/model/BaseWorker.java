@@ -15,7 +15,7 @@ public abstract class BaseWorker extends Service {
 
     @Override
     protected void failed() {
-        LOGGER.info("Background process are facinge an error");
+        LOGGER.info("Background process are facing an error");
     }
 
     @Override
