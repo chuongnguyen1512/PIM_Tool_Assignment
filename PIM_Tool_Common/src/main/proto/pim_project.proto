@@ -24,6 +24,7 @@ message PimProjectQueryRequest {
   string transactionID = 1;
   string searchContent = 2;
   int32 page = 3;
+  string status = 4;
 }
 
 message PimProjectQueryResponse {
@@ -36,6 +37,7 @@ message PimProjectQueryResponse {
 message PimProjectCountingRequest {
   string transactionID = 1;
   string searchContent = 2;
+  string status = 3;
 }
 
 message PimProjectCountingResponse {
@@ -43,6 +45,18 @@ message PimProjectCountingResponse {
   string bundleID = 2;
   bool isSuccess = 3;
   int64 totalRecordsNum = 4;
+}
+
+message PimProjectDeleteRequest {
+  string transactionID = 1;
+  repeated int32 projectNumbers = 2;
+}
+
+message PimProjectDeleteResponse {
+  string transactionID = 1;
+  string bundleID = 2;
+  bool isSuccess = 3;
+  int32 totalDeletedRecordsNum = 4;
 }
 
 message PimProject {

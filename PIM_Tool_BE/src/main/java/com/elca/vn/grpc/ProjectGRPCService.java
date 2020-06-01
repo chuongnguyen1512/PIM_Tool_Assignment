@@ -4,6 +4,8 @@ import com.elca.vn.entity.Project;
 import com.elca.vn.proto.model.PimProject;
 import com.elca.vn.proto.model.PimProjectCountingRequest;
 import com.elca.vn.proto.model.PimProjectCountingResponse;
+import com.elca.vn.proto.model.PimProjectDeleteRequest;
+import com.elca.vn.proto.model.PimProjectDeleteResponse;
 import com.elca.vn.proto.model.PimProjectPersistRequest;
 import com.elca.vn.proto.model.PimProjectPersistResponse;
 import com.elca.vn.proto.model.PimProjectQueryRequest;
@@ -96,14 +98,15 @@ public class ProjectGRPCService extends BaseProjectServiceGrpc.BaseProjectServic
         int indexPage = request.getPage();
         String searchContent = request.getSearchContent();
         String transactionID = request.getTransactionID();
+        String status = request.getStatus();
 
         receiveAndHandlingRPCRequest(transactionID, responseObserver, () -> {
 
             List<Project> projects = new ArrayList();
-            if (StringUtils.isBlank(searchContent)) {
+            if (StringUtils.isBlank(searchContent) && StringUtils.isBlank(status)) {
                 projects = basePimDataService.findAllDataWithPaging(indexPage);
             } else {
-                projects = basePimDataService.findDataWithPaging(indexPage, searchContent);
+                projects = basePimDataService.findDataWithPaging(indexPage, searchContent, status);
             }
 
             List<PimProject> pimProjects = projects.stream()
@@ -122,7 +125,7 @@ public class ProjectGRPCService extends BaseProjectServiceGrpc.BaseProjectServic
     /**
      * Getting number of total records either with searching content or without searching content
      *
-     * @param request rpc request
+     * @param request          rpc request
      * @param responseObserver response observer
      */
     @Override
@@ -135,19 +138,41 @@ public class ProjectGRPCService extends BaseProjectServiceGrpc.BaseProjectServic
 
         String transactionID = request.getTransactionID();
         String searchContent = request.getSearchContent();
+        String status = request.getStatus();
 
         receiveAndHandlingRPCRequest(transactionID, responseObserver, () -> {
             long totalRecordsNum;
 
-            if (StringUtils.isBlank(searchContent)) {
+            if (StringUtils.isBlank(searchContent) && StringUtils.isBlank(status)) {
                 totalRecordsNum = basePimDataService.getTotalDataSize();
             } else {
-                totalRecordsNum = basePimDataService.getTotalDataSize(searchContent);
+                totalRecordsNum = basePimDataService.getTotalDataSize(searchContent, status);
             }
 
             responseObserver.onNext(PimProjectCountingResponse.newBuilder()
                     .setTransactionID(transactionID)
                     .setTotalRecordsNum(totalRecordsNum)
+                    .setIsSuccess(true)
+                    .build());
+            responseObserver.onCompleted();
+        });
+    }
+
+    @Override
+    public void deleteProjects(PimProjectDeleteRequest request, StreamObserver<PimProjectDeleteResponse> responseObserver) {
+        if (Objects.isNull(request) || request.getProjectNumbersCount() == 0) {
+            LOGGER.error("Request is not valid");
+            handlingInternalError(responseObserver, null);
+            return;
+        }
+        String transactionID = request.getTransactionID();
+        List<Integer> deleteProjectNums = request.getProjectNumbersList();
+
+        receiveAndHandlingRPCRequest(transactionID, responseObserver, () -> {
+            int deletedProjects = basePimDataService.deleteData(deleteProjectNums);
+            responseObserver.onNext(PimProjectDeleteResponse.newBuilder()
+                    .setTransactionID(transactionID)
+                    .setTotalDeletedRecordsNum(deletedProjects)
                     .setIsSuccess(true)
                     .build());
             responseObserver.onCompleted();

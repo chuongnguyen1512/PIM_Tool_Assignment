@@ -2,6 +2,7 @@
     -fx-font-weight: bold;
 }
 
+#lbDeleteSelectedItems:hover,
 #lbResetSearch:hover{
     -fx-underline: true;
     -fx-cursor: hand;

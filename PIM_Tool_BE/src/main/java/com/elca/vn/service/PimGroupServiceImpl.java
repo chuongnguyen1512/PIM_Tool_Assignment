@@ -63,4 +63,9 @@ public class PimGroupServiceImpl implements BasePimDataService<Group> {
     public List<Group> findAllDataWithPaging(int indexPage) {
         return null;
     }
+
+    @Override
+    public int deleteData(List<Integer> deleteIDs) {
+        return 0;
+    }
 }

@@ -1,8 +1,10 @@
 package com.elca.vn.fragment;
 
+import com.elca.vn.component.BaseComponent;
 import com.elca.vn.configuration.JacpFXConfiguration;
 import com.elca.vn.converter.ChoiceBoxGroupStringConverter;
 import com.elca.vn.model.BaseWorker;
+import com.elca.vn.model.GUIEventMessage;
 import com.elca.vn.model.GUIStatusModel;
 import com.elca.vn.proto.model.PimGroup;
 import com.elca.vn.proto.model.PimGroupRequest;
@@ -31,6 +33,8 @@ import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -40,7 +44,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.elca.vn.configuration.JacpFXConfiguration.DEFAULT_RESOURCE_BUNDLE;
 import static com.elca.vn.configuration.JacpFXConfiguration.INTERNAL_ERROR_FRAGMENT_ID;
@@ -48,6 +51,8 @@ import static com.elca.vn.configuration.JacpFXConfiguration.OPEN_PROJECT_LIST_ME
 import static com.elca.vn.configuration.JacpFXConfiguration.PROJECT_FORM_FRAGMENT_FXML_URL;
 import static com.elca.vn.configuration.JacpFXConfiguration.PROJECT_FORM_FRAGMENT_ID;
 import static com.elca.vn.configuration.JacpFXConfiguration.SEPARATOR_CHARACTER;
+import static com.elca.vn.configuration.PIMAppConfiguration.BEAN_GROUP_GRPC_SERVICE;
+import static com.elca.vn.configuration.PIMAppConfiguration.BEAN_PROJECT_GRPC_SERVICE;
 import static com.elca.vn.constant.BundleConstant.EMPLOYEES_NOT_EXIST_SYSTEM_MSG_BUNDLE_ID;
 import static com.elca.vn.constant.BundleConstant.PROJECT_EXISTING_SYSTEM_MSG_BUNDLE_ID;
 import static com.elca.vn.constant.StylesheetConstant.STYLE_BORDER_FAILED;
@@ -59,9 +64,19 @@ import static com.elca.vn.constant.StylesheetConstant.STYLE_BORDER_FAILED;
         viewLocation = PROJECT_FORM_FRAGMENT_FXML_URL,
         scope = Scope.PROTOTYPE,
         resourceBundleLocation = DEFAULT_RESOURCE_BUNDLE)
-public class ProjectFormFragment implements BaseFragment, Initializable {
+public class ProjectFormComponent implements BaseComponent, Initializable {
+
+    private final ProjectGRPCService projectGRPCService;
+    private final GroupGRPCService groupGRPCService;
 
     private boolean isUpdateForm = false;
+
+    @Autowired
+    public ProjectFormComponent(@Qualifier(BEAN_PROJECT_GRPC_SERVICE) ProjectGRPCService projectGRPCService,
+                                @Qualifier(BEAN_GROUP_GRPC_SERVICE) GroupGRPCService groupGRPCService) {
+        this.projectGRPCService = projectGRPCService;
+        this.groupGRPCService = groupGRPCService;
+    }
 
     @Resource
     private ResourceBundle bundle;
@@ -137,7 +152,6 @@ public class ProjectFormFragment implements BaseFragment, Initializable {
             }
 
             PimProjectPersistRequest projectRequest = collectGUIData(status);
-            ProjectGRPCService projectGRPCService = ProjectGRPCService.getInstance("localhost", 8084);
             PimProjectPersistResponse projectResponse = projectGRPCService.sendingRPCRequest(projectRequest);
             verifyResponse(projectResponse);
         });
@@ -156,7 +170,7 @@ public class ProjectFormFragment implements BaseFragment, Initializable {
                     .setProjectName(tfProjectName.getText())
                     .setCustomer(tfCustomer.getText())
                     .setProcessingStatus(processingStatus)
-                    .setStatus(((GUIStatusModel) cbStatus.getSelectionModel().getSelectedItem()).getStatus())
+                    .setStatus(((GUIStatusModel) cbStatus.getSelectionModel().getSelectedItem()).status)
                     .setStartDate(GuiUtils.getDatePickerGoogleTimestampValue(dpStartDate))
                     .setGroupID(((PimGroup) cbGroup.getSelectionModel().getSelectedItem()).getGroupID())
                     .addAllMemberVISAs(GuiUtils.getMultipleValuesFromTextField(tfMember, SEPARATOR_CHARACTER))
@@ -167,7 +181,7 @@ public class ProjectFormFragment implements BaseFragment, Initializable {
                     .setProjectName(tfProjectName.getText())
                     .setCustomer(tfCustomer.getText())
                     .setProcessingStatus(processingStatus)
-                    .setStatus(((GUIStatusModel) cbStatus.getSelectionModel().getSelectedItem()).getStatus())
+                    .setStatus(((GUIStatusModel) cbStatus.getSelectionModel().getSelectedItem()).status)
                     .setStartDate(GuiUtils.getDatePickerGoogleTimestampValue(dpStartDate))
                     .setEndDate(GuiUtils.getDatePickerGoogleTimestampValue(dpEndDate))
                     .setGroupID(((PimGroup) cbGroup.getSelectionModel().getSelectedItem()).getGroupID())
@@ -184,12 +198,12 @@ public class ProjectFormFragment implements BaseFragment, Initializable {
     private void verifyResponse(PimProjectPersistResponse projectResponse) {
         if (Objects.isNull(projectResponse)) {
             // If fail, redirect to internal error page
-            context.send(JacpFXConfiguration.CENTER_COMPONENT_ID, INTERNAL_ERROR_FRAGMENT_ID);
+            context.send(JacpFXConfiguration.CENTER_COMPONENT_ID, new GUIEventMessage().setMessageID(INTERNAL_ERROR_FRAGMENT_ID));
         }
 
         if (projectResponse.getIsSuccess()) {
             // If sending request to server successfully, redirect to project list UI.
-            context.send(JacpFXConfiguration.CENTER_COMPONENT_ID, OPEN_PROJECT_LIST_MESSAGE);
+            context.send(JacpFXConfiguration.CENTER_COMPONENT_ID, new GUIEventMessage().setMessageID(OPEN_PROJECT_LIST_MESSAGE));
         }
 
         String bundleID = projectResponse.getBundleID();
@@ -233,10 +247,9 @@ public class ProjectFormFragment implements BaseFragment, Initializable {
     }
 
     private List<PimGroup> gettingGroupData(PimGroupRequest request) {
-        GroupGRPCService baseGRPCService = GroupGRPCService.getInstance("localhost", 8084);
         try {
             List<PimGroup> groupList = new ArrayList<>();
-            Iterator<PimGroupResponse> responses = baseGRPCService.sendingRPCRequestWithStreamingResponse(request);
+            Iterator<PimGroupResponse> responses = groupGRPCService.sendingRPCRequestWithStreamingResponse(request);
 
             if (Objects.isNull(responses)) {
                 return groupList;
@@ -253,7 +266,7 @@ public class ProjectFormFragment implements BaseFragment, Initializable {
             return groupList;
         } finally {
             // Streaming so have to handle shutdown channel outside
-            ManagedChannel channel = baseGRPCService.getChannel();
+            ManagedChannel channel = groupGRPCService.getChannel();
             if (Objects.nonNull(channel) && !channel.isShutdown()) {
                 channel.shutdown();
             }

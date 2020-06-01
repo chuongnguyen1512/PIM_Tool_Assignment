@@ -1,5 +1,7 @@
 package com.elca.vn.model;
 
+import java.util.Objects;
+
 public class GUIProjectTableModel {
 
     private boolean isChosen;
@@ -64,5 +66,18 @@ public class GUIProjectTableModel {
 
     public void setDelete(boolean delete) {
         isDelete = delete;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GUIProjectTableModel that = (GUIProjectTableModel) o;
+        return projectNumber == that.projectNumber;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(projectNumber);
     }
 }

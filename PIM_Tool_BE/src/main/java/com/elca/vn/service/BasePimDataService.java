@@ -18,4 +18,6 @@ public interface BasePimDataService<T> {
     List<T> findDataWithPaging(int indexPage, String... contentSearch);
 
     List<T> findAllDataWithPaging(int indexPage);
+
+    int deleteData(List<Integer> deleteIDs);
 }

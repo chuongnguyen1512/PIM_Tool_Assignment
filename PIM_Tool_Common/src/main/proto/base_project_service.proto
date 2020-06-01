@@ -18,4 +18,7 @@ service BaseProjectService {
 
   // Counting projects number
   rpc getTotalNumOfProjects(com.elca.vn.proto.model.PimProjectCountingRequest) returns (com.elca.vn.proto.model.PimProjectCountingResponse) {}
+
+  // Delete projects by project numbers
+  rpc deleteProjects(com.elca.vn.proto.model.PimProjectDeleteRequest) returns (com.elca.vn.proto.model.PimProjectDeleteResponse) {}
 }

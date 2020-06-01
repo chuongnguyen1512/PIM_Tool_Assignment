@@ -1,6 +1,7 @@
 package com.elca.vn.fragment;
 
 import com.elca.vn.configuration.JacpFXConfiguration;
+import com.elca.vn.model.GUIEventMessage;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -73,7 +74,7 @@ public class InternalErrorFragment implements Initializable {
 
         if (mouseEvent.equals(MouseEvent.MOUSE_CLICKED)) {
             lbBackToProjectList.getScene().setCursor(null);
-            context.send(JacpFXConfiguration.CENTER_COMPONENT_ID, OPEN_PROJECT_LIST_MESSAGE);
+            context.send(JacpFXConfiguration.CENTER_COMPONENT_ID, new GUIEventMessage().setMessageID(OPEN_PROJECT_LIST_MESSAGE));
         }
     }
 }

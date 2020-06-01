@@ -102,12 +102,14 @@ public class PimProjectServiceImpl implements BasePimDataService<Project> {
         Page<Project> projectsBatch = null;
         PageRequest page = PageRequest.of(indexPage, PAGING_SIZE);
 
-        if (projectNum <= 0) {
+        if (projectNum > 0) {
             // If content is num, try find with project num first
-            projectsBatch = projectRepository.findByProjectWithSearchContentAndStatus(content, status, page);
-        } else {
-            // Otherwise, find normal
             projectsBatch = projectRepository.findByProjectWithProjectNumAndStatus(projectNum, status, page);
+
+        }
+
+        if (Objects.isNull(projectsBatch) || projectsBatch.isEmpty()) {
+            projectsBatch = projectRepository.findByProjectWithSearchContentAndStatus(content, status, page);
         }
 
         if (Objects.isNull(projectsBatch) || projectsBatch.isEmpty()) {
@@ -140,6 +142,21 @@ public class PimProjectServiceImpl implements BasePimDataService<Project> {
             return new ArrayList();
         }
         return projectsBatch.getContent();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public int deleteData(List<Integer> deleteIDs) {
+        if (CollectionUtils.isEmpty(deleteIDs)) {
+            String errorMsg = String.format("Collection of delete ids %s is null or emtpy", deleteIDs);
+            LOGGER.warn(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+        int deleteRows = projectRepository.deleteByProjectNumbers(deleteIDs);
+        if (deleteRows <= 0) {
+            LOGGER.warn("Not found any projects match with given ids to delete");
+        }
+        return deleteRows;
     }
 
     @Override
@@ -179,7 +196,7 @@ public class PimProjectServiceImpl implements BasePimDataService<Project> {
         String status = contentSearch[1];
 
         int projectNum = toNumber(content);
-        if (projectNum <= 0) {
+        if (projectNum > 0) {
             return projectRepository.countProjectsWithProjectNumAndStatus(projectNum, status);
         }
         return projectRepository.countProjectsWithSearchContentAndStatus(content, status);

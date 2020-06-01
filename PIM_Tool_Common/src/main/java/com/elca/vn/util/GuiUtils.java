@@ -22,6 +22,8 @@ import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import static com.elca.vn.constant.StylesheetConstant.PAGING_SIZE;
+
 /**
  * Utils class for GUI component handling.
  */
@@ -45,7 +47,7 @@ public class GuiUtils {
             String resource = bundle.getString(bundleID);
             return String.format(resource, params);
         } catch (MissingResourceException e) {
-            LOGGER.warn("Cannot find resource bundle %", bundleID);
+            LOGGER.warn("Cannot find resource bundle {}", bundleID);
         }
         return StringUtils.EMPTY;
     }
@@ -188,5 +190,15 @@ public class GuiUtils {
 
     private static boolean isDatePicker(Control control) {
         return Objects.nonNull(control) && control instanceof DatePicker;
+    }
+
+    /**
+     * Calculate page count numbers
+     *
+     * @param totalRecords total records
+     * @return
+     */
+    public static int calculatePageCount(int totalRecords) {
+        return (totalRecords + PAGING_SIZE - 1) / PAGING_SIZE;
     }
 }

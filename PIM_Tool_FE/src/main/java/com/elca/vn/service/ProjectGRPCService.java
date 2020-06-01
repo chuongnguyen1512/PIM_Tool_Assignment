@@ -1,12 +1,13 @@
 package com.elca.vn.service;
 
 import com.elca.vn.proto.model.PimProjectCountingRequest;
+import com.elca.vn.proto.model.PimProjectDeleteRequest;
 import com.elca.vn.proto.model.PimProjectPersistRequest;
 import com.elca.vn.proto.model.PimProjectQueryRequest;
 import com.elca.vn.proto.service.BaseProjectServiceGrpc;
 import io.grpc.ManagedChannel;
-import io.grpc.StatusRuntimeException;
 import io.grpc.stub.AbstractStub;
+import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -14,26 +15,11 @@ import java.util.Objects;
 /**
  * RCP Client service communicate using protobuf
  */
+@Service
 public class ProjectGRPCService extends BaseGRPCService {
 
-    private static ProjectGRPCService projectGRPCService;
-
-    private ProjectGRPCService(String serverName, int port) {
+    public ProjectGRPCService(String serverName, int port) {
         super(serverName, port);
-    }
-
-    /**
-     * Get singleton instance for project grpc client service
-     *
-     * @param serverName server name
-     * @param port port
-     * @return instance for project grpc client service
-     */
-    public static ProjectGRPCService getInstance(String serverName, int port) {
-        if (Objects.isNull(projectGRPCService)) {
-            return new ProjectGRPCService(serverName, port);
-        }
-        return projectGRPCService;
     }
 
     /**
@@ -64,6 +50,10 @@ public class ProjectGRPCService extends BaseGRPCService {
 
         if (request instanceof PimProjectQueryRequest) {
             return (O) blockingStub.getProjects((PimProjectQueryRequest) request);
+        }
+
+        if (request instanceof PimProjectDeleteRequest) {
+            return (O) blockingStub.deleteProjects((PimProjectDeleteRequest) request);
         }
         return null;
     }

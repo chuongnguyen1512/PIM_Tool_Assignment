@@ -46,7 +46,9 @@ public class JacpFXConfiguration {
     public static final String INTERNAL_ERROR_FRAGMENT_FXML_URL = "/fxml/fragment/Internal_Error_Fragment.fxml";
 
     // Command message event
-    public static final String OPEN_PROJECT_FORM_MESSAGE = "OPEN_PROJECT_FORM_MESSAGE";
+    public static final String OPEN_PROJECT_UPDATE_FORM_MESSAGE = "OPEN_PROJECT_UPDATE_FORM_MESSAGE";
+    public static final String UPDATE_PROJECT_NUMBER = "UPDATE_PROJECT_NUMBER";
+    public static final String OPEN_PROJECT_INSERT_FORM_MESSAGE = "OPEN_PROJECT_INSERT_FORM_MESSAGE";
     public static final String OPEN_PROJECT_LIST_MESSAGE = "OPEN_PROJECT_LIST_MESSAGE";
     public static final String OPEN_INTERNAL_ERROR_MESSAGE = "OPEN_INTERNAL_ERROR_MESSAGE";
     public static final String CLOSE_CHILD_COMPONENTS_MESSAGE = "CLOSE_CHILD_COMPONENTS_MESSAGE";

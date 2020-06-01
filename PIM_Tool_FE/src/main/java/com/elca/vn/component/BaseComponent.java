@@ -1,7 +1,8 @@
-package com.elca.vn.fragment;
+package com.elca.vn.component;
 
 import com.elca.vn.configuration.JacpFXConfiguration;
 import com.elca.vn.converter.ChoiceBoxStatusStringConverter;
+import com.elca.vn.model.GUIEventMessage;
 import com.elca.vn.model.GUIStatusModel;
 import com.elca.vn.util.GuiUtils;
 import javafx.collections.FXCollections;
@@ -19,7 +20,7 @@ import static com.elca.vn.constant.StylesheetConstant.STYLE_BORDER_FAILED;
 /**
  * Fragment event for loading status data
  */
-public interface BaseFragment {
+public interface BaseComponent {
 
     default void loadStatusData(ChoiceBox choiceBox) {
         choiceBox.setConverter(new ChoiceBoxStatusStringConverter());
@@ -44,7 +45,7 @@ public interface BaseFragment {
             grpcHandling.execute();
         } catch (Exception e) {
             // If fail, redirect to internal error page
-            context.send(JacpFXConfiguration.CENTER_COMPONENT_ID, OPEN_INTERNAL_ERROR_MESSAGE);
+            context.send(JacpFXConfiguration.CENTER_COMPONENT_ID, new GUIEventMessage().setMessageID(OPEN_INTERNAL_ERROR_MESSAGE));
         }
     }
 

@@ -1,6 +1,7 @@
 package com.elca.vn;
 
 import com.elca.vn.configuration.JacpFXConfiguration;
+import com.elca.vn.configuration.PIMAppConfiguration;
 import com.elca.vn.workbench.PIMToolWorkbench;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -15,7 +16,7 @@ public class PIMToolFEApplication extends AFXSpringJavaConfigLauncher {
 
     @Override
     protected Class<?>[] getConfigClasses() {
-        return new Class[]{JacpFXConfiguration.class};
+        return new Class[]{JacpFXConfiguration.class, PIMAppConfiguration.class};
     }
 
     @Override

@@ -4,15 +4,15 @@ import com.elca.vn.proto.model.PimGroupRequest;
 import com.elca.vn.proto.service.BaseGroupServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.stub.AbstractStub;
+import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
 import java.util.Objects;
 
+@Service
 public class GroupGRPCService extends BaseGRPCService {
 
-    private static GroupGRPCService groupGRPCService;
-
-    private GroupGRPCService(String serverName, int port) {
+    public GroupGRPCService(String serverName, int port) {
         super(serverName, port);
     }
 
@@ -32,20 +32,6 @@ public class GroupGRPCService extends BaseGRPCService {
             return (Iterator<O>) blockingStub.streamGroupData((PimGroupRequest) request);
         }
         return null;
-    }
-
-    /**
-     * Getting singleton instance for group grpc client service
-     *
-     * @param serverName server name
-     * @param port       port
-     * @return singleton instance for group grpc client service
-     */
-    public static GroupGRPCService getInstance(String serverName, int port) {
-        if (Objects.isNull(groupGRPCService)) {
-            return new GroupGRPCService(serverName, port);
-        }
-        return groupGRPCService;
     }
 
     @Override
