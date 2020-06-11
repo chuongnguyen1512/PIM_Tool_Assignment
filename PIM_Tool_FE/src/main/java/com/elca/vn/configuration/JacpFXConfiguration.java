@@ -1,14 +1,18 @@
 package com.elca.vn.configuration;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Configuration class for UI components
  */
 @Configuration
-@Component
 public class JacpFXConfiguration {
+
+    private JacpFXConfiguration() {
+    }
 
     // Workbench
     public static final String PIM_TOOL_WORKBENCH_ID = "Pim_Workbench_ID";
@@ -36,6 +40,12 @@ public class JacpFXConfiguration {
     public static final String CENTER_COMPONENT_FXML_URL = "/fxml/component/Center_Component.fxml";
 
     // Fragment
+    public static final String LEFT_MENU_FRAGMENT_ID = "Left_Menu_Fragment_ID";
+    public static final String LEFT_MENU_FRAGMENT_FXML_URL = "/fxml/fragment/Left_Menu_Fragment.fxml";
+
+    public static final String TOP_MENU_FRAGMENT_ID = "Top_Menu_Fragment_ID";
+    public static final String TOP_MENU_FRAGMENT_FXML_URL = "/fxml/fragment/Top_Menu_Fragment.fxml";
+
     public static final String PROJECT_FORM_FRAGMENT_ID = "Project_Form_Fragment_ID";
     public static final String PROJECT_FORM_FRAGMENT_FXML_URL = "/fxml/fragment/Project_Form_Fragment.fxml";
 
@@ -46,15 +56,16 @@ public class JacpFXConfiguration {
     public static final String INTERNAL_ERROR_FRAGMENT_FXML_URL = "/fxml/fragment/Internal_Error_Fragment.fxml";
 
     // Command message event
-    public static final String OPEN_PROJECT_UPDATE_FORM_MESSAGE = "OPEN_PROJECT_UPDATE_FORM_MESSAGE";
+    public static final String OPEN_PROJECT_FORM_MESSAGE = "OPEN_PROJECT_FORM_MESSAGE";
     public static final String UPDATE_PROJECT_NUMBER = "UPDATE_PROJECT_NUMBER";
-    public static final String OPEN_PROJECT_INSERT_FORM_MESSAGE = "OPEN_PROJECT_INSERT_FORM_MESSAGE";
+    public static final String UPDATE_PROJECT_STATUS = "UPDATE_PROJECT_STATUS";
     public static final String OPEN_PROJECT_LIST_MESSAGE = "OPEN_PROJECT_LIST_MESSAGE";
     public static final String OPEN_INTERNAL_ERROR_MESSAGE = "OPEN_INTERNAL_ERROR_MESSAGE";
     public static final String CLOSE_CHILD_COMPONENTS_MESSAGE = "CLOSE_CHILD_COMPONENTS_MESSAGE";
+    public static final String RELOAD_TOP_MENU_MESSAGE = "RELOAD_TOP_MENU_MESSAGE";
 
     // Resource
     public static final String DEFAULT_RESOURCE_BUNDLE = "bundles.language";
-    public static final String SEPARATOR_CHARACTER = ",";
-
+    public static final List<String> BUNDLE_LANGUAGES = Arrays.asList("EN", "FR");
+    public static final String DOUBLE_DOTS_SEPARATOR_CHARACTER = ":";
 }

@@ -11,12 +11,15 @@ import org.jacpfx.spring.launcher.AFXSpringJavaConfigLauncher;
 public class PIMToolFEApplication extends AFXSpringJavaConfigLauncher {
 
     public static void main(String[] args) {
-        Application.launch(args);
+        Application.launch(PIMToolFEApplication.class, args);
     }
 
     @Override
     protected Class<?>[] getConfigClasses() {
-        return new Class[]{JacpFXConfiguration.class, PIMAppConfiguration.class};
+        return new Class[]{
+                JacpFXConfiguration.class,
+                PIMAppConfiguration.class
+        };
     }
 
     @Override
@@ -33,6 +36,7 @@ public class PIMToolFEApplication extends AFXSpringJavaConfigLauncher {
     protected void postInit(Stage stage) {
         stage.getScene().getStylesheets()
                 .addAll(this.getClass().getResource("/styles/pim_common.css").toExternalForm(),
+                        this.getClass().getResource("/styles/top_component.css").toExternalForm(),
                         this.getClass().getResource("/styles/left_component.css").toExternalForm(),
                         this.getClass().getResource("/styles/project_form.css").toExternalForm(),
                         this.getClass().getResource("/styles/project_list.css").toExternalForm());

@@ -1,0 +1,23 @@
+
+.tb-list-cell{
+    -fx-border-color: transparent;
+}
+
+.tag-bar {
+    -fx-border-color: grey;
+    -fx-spacing: 1;
+    -fx-padding: 0.5;
+    -fx-max-height: 25;
+    -fx-background-radius: 2 2 2 2;
+    -fx-border-radius: 2 2 2 2;
+}
+
+.tag-bar .tag {
+    -fx-background-color: #b5b5b5;
+    -fx-alignment: center;
+    -fx-background-radius: 5 5 5 5;
+}
+
+.tag-bar .tag .button {
+    -fx-background-color: transparent;
+}

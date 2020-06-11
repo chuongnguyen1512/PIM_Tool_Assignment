@@ -1,6 +1,7 @@
 package com.elca.vn.transform;
 
 import com.elca.vn.entity.Employee;
+import com.elca.vn.entity.Group;
 import com.elca.vn.entity.Project;
 import com.elca.vn.proto.model.PimProject;
 import com.elca.vn.proto.model.Status;
@@ -37,6 +38,7 @@ public class ProjectTransformServiceImpl implements BaseTransformService<PimProj
         project.setStatus(sourceObject.getStatus().toString());
         project.setName(sourceObject.getProjectName());
         project.setEmployees(transformToEmployees(sourceObject.getMemberVISAsList()));
+        project.setGroup(transformToGroup(sourceObject.getGroupID()));
         return project;
     }
 
@@ -50,6 +52,19 @@ public class ProjectTransformServiceImpl implements BaseTransformService<PimProj
         if (Objects.isNull(desProject)) {
             return null;
         }
+        Group group = desProject.getGroup();
+        if (Objects.nonNull(group)) {
+            return PimProject.newBuilder()
+                    .setProjectNumber(desProject.getProjectNumber())
+                    .setProjectName(desProject.getName())
+                    .setCustomer(desProject.getCustomer())
+                    .setStatus(Status.valueOf(desProject.getStatus()))
+                    .setStartDate(PIMToolUtils.convertToTimestamp(desProject.getStartDate()))
+                    .setEndDate(PIMToolUtils.convertToTimestamp(desProject.getEndDate()))
+                    .addAllMemberVISAs(desProject.getEmployees().stream().map(Employee::getVisa).collect(Collectors.toList()))
+                    .setGroupID(group.getId())
+                    .build();
+        }
         return PimProject.newBuilder()
                 .setProjectNumber(desProject.getProjectNumber())
                 .setProjectName(desProject.getName())
@@ -57,6 +72,7 @@ public class ProjectTransformServiceImpl implements BaseTransformService<PimProj
                 .setStatus(Status.valueOf(desProject.getStatus()))
                 .setStartDate(PIMToolUtils.convertToTimestamp(desProject.getStartDate()))
                 .setEndDate(PIMToolUtils.convertToTimestamp(desProject.getEndDate()))
+                .addAllMemberVISAs(desProject.getEmployees().stream().map(Employee::getVisa).collect(Collectors.toList()))
                 .build();
     }
 
@@ -66,5 +82,11 @@ public class ProjectTransformServiceImpl implements BaseTransformService<PimProj
             employee.setVisa(x);
             return employee;
         }).collect(Collectors.toSet());
+    }
+
+    private Group transformToGroup(long groupID) {
+        Group group = new Group();
+        group.setId(groupID);
+        return group;
     }
 }

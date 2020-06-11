@@ -1,5 +1,6 @@
 package com.elca.vn.util;
 
+import com.elca.vn.proto.model.PimEmployee;
 import com.google.protobuf.Timestamp;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
@@ -10,6 +11,7 @@ import javafx.scene.control.TextField;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static com.elca.vn.constant.StylesheetConstant.PAGING_SIZE;
 
@@ -102,7 +105,42 @@ public class GuiUtils {
      * @return
      */
     public static List<String> getMultipleValuesFromTextField(TextField textField, String separator) {
-        return StringUtils.isNotBlank(textField.getText()) ? Arrays.asList(StringUtils.split(textField.getText(), separator)) : new ArrayList<>();
+        if (StringUtils.isBlank(textField.getText()) || StringUtils.isBlank(separator)) {
+            return new ArrayList();
+        }
+        String[] arrayValues = StringUtils.split(textField.getText(), separator);
+        return Arrays.stream(arrayValues).map(StringUtils::trim).collect(Collectors.toList());
+    }
+
+    /**
+     * Transform input split into small list by separator character
+     *
+     * @param values
+     * @param separator
+     * @return
+     */
+    public static List<String> getDividedValues(List<String> values, String separator) {
+        if (StringUtils.isBlank(separator) || CollectionUtils.isEmpty(values)) {
+            return new ArrayList();
+        }
+        return values.stream().map(x -> StringUtils.trim(StringUtils.split(x, separator)[0])).collect(Collectors.toList());
+    }
+
+    /**
+     * Get text field value from multiple values
+     *
+     * @param values    multiple values
+     * @param separator separator character
+     * @return text field value from multiple values
+     */
+    public static String getTextFieldValueFromValues(List<String> values, String separator) {
+        if (CollectionUtils.isEmpty(values) || StringUtils.isBlank(separator)) {
+            return StringUtils.EMPTY;
+        }
+        StringBuilder textBuilder = new StringBuilder();
+        String separatorWithSpace = separator + StringUtils.SPACE;
+        values.forEach(x -> textBuilder.append(x).append(separatorWithSpace));
+        return StringUtils.removeEnd(textBuilder.toString(), separatorWithSpace);
     }
 
     /**
@@ -200,5 +238,18 @@ public class GuiUtils {
      */
     public static int calculatePageCount(int totalRecords) {
         return (totalRecords + PAGING_SIZE - 1) / PAGING_SIZE;
+    }
+
+    /**
+     * Transform from list of employees data to list of text value
+     *
+     * @param employees list of employees
+     * @return list of text value
+     */
+    public static List<String> transformToTextFieldValue(List<PimEmployee> employees) {
+        if (CollectionUtils.isEmpty(employees)) {
+            return new ArrayList<>();
+        }
+        return employees.stream().map(x -> x.getVisa() + ": " + x.getFirstName() + StringUtils.SPACE + x.getLastName()).collect(Collectors.toList());
     }
 }

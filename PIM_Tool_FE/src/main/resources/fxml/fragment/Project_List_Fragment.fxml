@@ -12,103 +12,90 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<AnchorPane AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="70" AnchorPane.topAnchor="0"
-            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
-    <VBox prefHeight="690.0" prefWidth="1000.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0"
-          AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+
+<AnchorPane AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="70" AnchorPane.topAnchor="0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox prefHeight="690.0" prefWidth="1000.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <children>
             <HBox prefHeight="0.0" prefWidth="900.0" style="-fx-border-color: grey; -fx-border-width: 0 0 0.5 0;">
                 <children>
-                    <Label prefHeight="0.0" prefWidth="1011.0" text="Projects List">
+                    <Label prefHeight="0.0" prefWidth="1011.0" text="%lbProjectsList">
                         <font>
-                            <Font size="18.0"/>
+                            <Font size="18.0" />
                         </font>
                     </Label>
                 </children>
                 <VBox.margin>
-                    <Insets top="10.0"/>
+                    <Insets top="10.0" />
                 </VBox.margin>
                 <padding>
-                    <Insets bottom="10.0" top="10.0"/>
+                    <Insets bottom="10.0" top="10.0" />
                 </padding>
             </HBox>
             <HBox prefHeight="33.0" prefWidth="900.0">
                 <children>
-                    <TextField fx:id="tfSearchContent" prefHeight="25.0" prefWidth="350.0"
-                               promptText="Project number, name, customer name">
+                    <TextField fx:id="tfSearchContent" prefHeight="25.0" prefWidth="350.0" promptText="%ptSearchContent">
                         <HBox.margin>
-                            <Insets right="20.0"/>
+                            <Insets right="20.0" />
                         </HBox.margin>
                     </TextField>
                     <ChoiceBox fx:id="cbStatus" prefHeight="25.0" prefWidth="150.0">
                         <HBox.margin>
-                            <Insets right="60.0"/>
+                            <Insets right="60.0" />
                         </HBox.margin>
                     </ChoiceBox>
-                    <Button mnemonicParsing="false" onAction="#searchProjects" prefHeight="33.0" prefWidth="159.0"
-                            style="-fx-background-color: #49a4ff; -fx-border-color: transparent; -fx-border-radius: 5 5 5 5; -fx-background-radius: 5 5 5 5;"
-                            text="Search Project" textFill="WHITE">
+                    <Button mnemonicParsing="false" onAction="#searchProjects" prefHeight="33.0" prefWidth="159.0" style="-fx-background-color: #49a4ff; -fx-border-color: transparent; -fx-border-radius: 5 5 5 5; -fx-background-radius: 5 5 5 5;" text="%btnSearchProject" textFill="WHITE">
                         <font>
-                            <Font name="System Bold" size="14.0"/>
+                            <Font name="System Bold" size="14.0" />
                         </font>
                     </Button>
-                    <Label fx:id="lbResetSearch" alignment="CENTER" onMouseClicked="#resetSearchInputs"
-                           prefHeight="33.0" prefWidth="139.0" text="Reset Search" textFill="#49a4ff">
+                    <Label fx:id="lbResetSearch" onMouseClicked="#resetSearchInputs" prefHeight="33.0" prefWidth="241.0" text="%lbResetSearch" textFill="#49a4ff">
                         <HBox.margin>
-                            <Insets left="20.0"/>
+                            <Insets left="20.0" />
                         </HBox.margin>
                     </Label>
                 </children>
                 <VBox.margin>
-                    <Insets top="30.0"/>
+                    <Insets top="30.0" />
                 </VBox.margin>
             </HBox>
             <VBox prefWidth="900.0">
                 <children>
                     <TableView fx:id="tvProjects" editable="true" prefHeight="200.0" prefWidth="900.0">
                         <columns>
-                            <TableColumn fx:id="tcCheckBox" maxWidth="50" minWidth="50" prefWidth="50" text=""/>
-                            <TableColumn fx:id="tcProjectNum" maxWidth="100" minWidth="100" prefWidth="100"
-                                         text="Number"/>
-                            <TableColumn fx:id="tcProjectName" text="Name"/>
-                            <TableColumn fx:id="tcStatus" maxWidth="150" minWidth="150" prefWidth="150" text="Status"/>
-                            <TableColumn fx:id="tcCustomer" text="Customer"/>
-                            <TableColumn fx:id="tcStartDate" maxWidth="150" minWidth="150" prefWidth="150"
-                                         text="Start Date"/>
-                            <TableColumn fx:id="tcBtnDelete" maxWidth="100" minWidth="100" prefWidth="100"
-                                         text="Delete"/>
+                            <TableColumn fx:id="tcCheckBox" maxWidth="50" minWidth="50" prefWidth="50" text="" />
+                            <TableColumn fx:id="tcProjectNum" maxWidth="100" minWidth="100" prefWidth="100" text="%tcNumber" />
+                            <TableColumn fx:id="tcProjectName" text="%tcName" />
+                            <TableColumn fx:id="tcStatus" maxWidth="150" minWidth="150" prefWidth="150" text="%tcStatus" />
+                            <TableColumn fx:id="tcCustomer" text="%tcCustomer" />
+                            <TableColumn fx:id="tcStartDate" maxWidth="150" minWidth="150" prefWidth="150" text="%tcStartDate" />
+                            <TableColumn fx:id="tcBtnDelete" maxWidth="100" minWidth="100" prefWidth="100" text="%tcDelete" />
                         </columns>
                         <columnResizePolicy>
-                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                         </columnResizePolicy>
                     </TableView>
                     <AnchorPane>
                         <children>
-                            <Label fx:id="lbItemsSelected" text="items selected" textFill="#49a4ff" visible="false"
-                                   AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+                            <Label fx:id="lbItemsSelected" textFill="#49a4ff" visible="false" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
                                 <font>
-                                    <Font name="System Bold" size="16.0"/>
+                                    <Font name="System Bold" size="16.0" />
                                 </font>
                             </Label>
-                            <Label fx:id="lbDeleteSelectedItems" alignment="CENTER_RIGHT"
-                                   onMouseClicked="#deleteMultipleItems" text="Delete selected items" textFill="#ee6c6c"
-                                   visible="false" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                            <Label fx:id="lbDeleteSelectedItems" alignment="CENTER_RIGHT" onMouseClicked="#deleteMultipleItems" text="%lbDeleteSelectedItems" textFill="#ee6c6c" visible="false" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                 <font>
-                                    <Font name="System Bold" size="16.0"/>
+                                    <Font name="System Bold" size="16.0" />
                                 </font>
                             </Label>
                         </children>
                     </AnchorPane>
                     <AnchorPane prefWidth="200.0">
                         <children>
-                            <Pagination fx:id="pageProject" maxPageIndicatorCount="0" pageCount="0" prefWidth="200.0"
-                                        style="-fx-page-information-visible: false; -fx-background-color: transparent;"
-                                        AnchorPane.rightAnchor="10.0"/>
+                            <Pagination fx:id="pageProject" maxPageIndicatorCount="0" pageCount="0" prefWidth="200.0" style="-fx-page-information-visible: false; -fx-background-color: transparent;" AnchorPane.rightAnchor="10.0" />
                         </children>
                     </AnchorPane>
                 </children>
                 <VBox.margin>
-                    <Insets top="40.0"/>
+                    <Insets top="40.0" />
                 </VBox.margin>
             </VBox>
         </children>

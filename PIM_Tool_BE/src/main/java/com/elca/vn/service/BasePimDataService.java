@@ -1,23 +1,31 @@
 package com.elca.vn.service;
 
-import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Base service for handle data
+ *
+ * @param <T>
+ */
 public interface BasePimDataService<T> {
 
     T importData(T project);
 
+    T updateData(T project);
+
     T queryData(String id);
 
-    Iterator<T> getData();
+    Iterable<T> getData();
+
+    Iterable<T> getData(List<String> ids);
 
     long getTotalDataSize();
 
     long getTotalDataSize(String... contentSearch);
 
-    List<T> findDataWithPaging(int indexPage, String... contentSearch);
+    Iterable<T> findDataWithPaging(int indexPage, String... contentSearch);
 
-    List<T> findAllDataWithPaging(int indexPage);
+    Iterable<T> findAllDataWithPaging(int indexPage);
 
     int deleteData(List<Integer> deleteIDs);
 }

@@ -11,7 +11,7 @@ import "pim_project.proto";
 service BaseProjectService {
 
   // Saving project data
-  rpc savingNewProject(com.elca.vn.proto.model.PimProjectPersistRequest) returns (com.elca.vn.proto.model.PimProjectPersistResponse) {}
+  rpc savingProject(com.elca.vn.proto.model.PimProjectPersistRequest) returns (com.elca.vn.proto.model.PimProjectPersistResponse) {}
 
   // Get projects with paging
   rpc getProjects(com.elca.vn.proto.model.PimProjectQueryRequest) returns (com.elca.vn.proto.model.PimProjectQueryResponse) {}

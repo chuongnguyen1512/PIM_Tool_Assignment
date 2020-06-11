@@ -1,28 +1,13 @@
 package com.elca.vn.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "PIM_EMPLOYEE")
-public class Employee {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID", nullable = false, length = 19)
-    private long employeeID;
+public class Employee extends BaseEntity {
 
     @Column(name = "VISA", nullable = false, length = 3)
     private String visa;
@@ -36,24 +21,12 @@ public class Employee {
     @Column(name = "BIRTH_DATE", nullable = false)
     private Date birthDate;
 
-    @Column(name = "VERSION", nullable = false, length = 10)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long version;
-
-    @ManyToMany(mappedBy = "employees", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "employees", fetch = FetchType.EAGER)
     private Set<Project> projects = new HashSet<>();
 
     @OneToOne
     @JoinColumn(name = "GROUP_LEADER_ID")
     private Group emp_group;
-
-    public long getEmployeeID() {
-        return employeeID;
-    }
-
-    public void setEmployeeID(long employeeID) {
-        this.employeeID = employeeID;
-    }
 
     public String getVisa() {
         return visa;
@@ -85,14 +58,6 @@ public class Employee {
 
     public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
-    }
-
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long version) {
-        this.version = version;
     }
 
     public Set<Project> getProjects() {

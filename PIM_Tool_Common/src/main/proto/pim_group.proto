@@ -16,7 +16,7 @@ message PimGroupResponse {
   string transactionID = 1;
   string bundleID = 2;
   bool isSuccess = 3;
-  PimGroup group = 4;
+  repeated PimGroup groups = 4;
 }
 
 message PimGroup {

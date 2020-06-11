@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_outer_classname = "BaseEmployeeServiceProto";
+option objc_class_prefix = "RTG";
+
+package com.elca.vn.proto.service;
+
+import "pim_employee.proto";
+
+service BaseEmployeeService {
+
+    // Get employee data
+    rpc getEmployeeData (com.elca.vn.proto.model.PimEmployeeQueryRequest) returns (com.elca.vn.proto.model.PimEmployeeQueryResponse) {
+    }
+}

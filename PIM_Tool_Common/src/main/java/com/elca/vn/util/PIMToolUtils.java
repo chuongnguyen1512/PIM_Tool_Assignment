@@ -4,11 +4,21 @@ import com.google.protobuf.Timestamp;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Objects;
 
 public class PIMToolUtils {
     private PIMToolUtils() {
+    }
+
+    public static LocalDate convertToLocalDate(Timestamp timestamp) {
+        if (Objects.isNull(timestamp)) {
+            return null;
+        }
+        Date date = convertToDate(timestamp);
+        return Objects.nonNull(date) ? date.toInstant().atZone(ZoneId.of("UTC")).toLocalDate() : null;
     }
 
     public static Date convertToDate(Timestamp timestamp) {

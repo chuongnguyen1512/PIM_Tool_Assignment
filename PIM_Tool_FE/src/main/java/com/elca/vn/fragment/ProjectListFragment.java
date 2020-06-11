@@ -2,6 +2,7 @@ package com.elca.vn.fragment;
 
 import com.elca.vn.component.BaseComponent;
 import com.elca.vn.configuration.JacpFXConfiguration;
+import com.elca.vn.model.BaseWorker;
 import com.elca.vn.model.GUIEventMessage;
 import com.elca.vn.model.GUIProjectTableModel;
 import com.elca.vn.model.GUIStatusModel;
@@ -14,6 +15,7 @@ import com.elca.vn.proto.model.PimProjectQueryResponse;
 import com.elca.vn.proto.model.Status;
 import com.elca.vn.service.ProjectGRPCService;
 import com.elca.vn.transform.GUITransform;
+import com.elca.vn.util.ApplicationBundleUtils;
 import com.elca.vn.util.GuiUtils;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -41,7 +43,7 @@ import org.jacpfx.api.fragment.Scope;
 import org.jacpfx.rcp.context.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.CollectionUtils;
 
@@ -59,10 +61,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.elca.vn.configuration.JacpFXConfiguration.DEFAULT_RESOURCE_BUNDLE;
-import static com.elca.vn.configuration.JacpFXConfiguration.OPEN_PROJECT_UPDATE_FORM_MESSAGE;
+import static com.elca.vn.configuration.JacpFXConfiguration.OPEN_PROJECT_FORM_MESSAGE;
 import static com.elca.vn.configuration.JacpFXConfiguration.PROJECT_LIST_FRAGMENT_FXML_URL;
 import static com.elca.vn.configuration.JacpFXConfiguration.PROJECT_LIST_FRAGMENT_ID;
 import static com.elca.vn.configuration.JacpFXConfiguration.UPDATE_PROJECT_NUMBER;
+import static com.elca.vn.configuration.JacpFXConfiguration.UPDATE_PROJECT_STATUS;
 import static com.elca.vn.configuration.PIMAppConfiguration.BEAN_PROJECT_GRPC_SERVICE;
 import static com.elca.vn.constant.BundleConstant.ERROR_ALERT_HEADER_BUNDLE_ID;
 import static com.elca.vn.constant.BundleConstant.ERROR_ALERT_TITLE_BUNDLE_ID;
@@ -79,9 +82,9 @@ import static com.elca.vn.constant.StylesheetConstant.STYLE_DELETE_ICON;
         viewLocation = PROJECT_LIST_FRAGMENT_FXML_URL,
         scope = Scope.PROTOTYPE,
         resourceBundleLocation = DEFAULT_RESOURCE_BUNDLE)
-public class ProjectListComponent implements BaseComponent, Initializable {
+public class ProjectListFragment extends BaseComponent implements DisposableBean, Initializable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProjectListComponent.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProjectListFragment.class);
 
     private final ProjectGRPCService projectGRPCService;
 
@@ -89,17 +92,14 @@ public class ProjectListComponent implements BaseComponent, Initializable {
     private String searchContent = null;
     private Status selectedStatus = null;
     private ObservableSet<GUIProjectTableModel> selectedProjects = FXCollections.observableSet(new HashSet());
+    private BaseWorker worker;
 
-    @Autowired
-    public ProjectListComponent(@Qualifier(BEAN_PROJECT_GRPC_SERVICE) ProjectGRPCService projectGRPCService) {
+    public ProjectListFragment(@Qualifier(BEAN_PROJECT_GRPC_SERVICE) ProjectGRPCService projectGRPCService) {
         this.projectGRPCService = projectGRPCService;
     }
 
     @Resource
     private Context context;
-
-    @Resource
-    private ResourceBundle bundle;
 
     @FXML
     private TextField tfSearchContent;
@@ -142,6 +142,7 @@ public class ProjectListComponent implements BaseComponent, Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ApplicationBundleUtils.reloadBundle(context, resources);
         tcProjectName.setCellValueFactory(new PropertyValueFactory<GUIProjectTableModel, String>("projectName"));
         tcStatus.setCellValueFactory(new PropertyValueFactory<GUIProjectTableModel, String>("status"));
         tcStartDate.setCellValueFactory(new PropertyValueFactory<GUIProjectTableModel, String>("startDate"));
@@ -160,6 +161,16 @@ public class ProjectListComponent implements BaseComponent, Initializable {
         });
     }
 
+    @Override
+    public void destroy() throws Exception {
+        if (Objects.isNull(worker)) {
+            return;
+        }
+        if (worker.isRunning()) {
+            worker.cancel();
+        }
+    }
+
     private void loadHyperlink() {
         tcProjectNum.setCellValueFactory(x -> new ReadOnlyObjectWrapper(x.getValue()));
         tcProjectNum.setCellFactory(x -> {
@@ -175,9 +186,10 @@ public class ProjectListComponent implements BaseComponent, Initializable {
                         hyperlink.setOnAction(x -> {
                             Map<String, Object> params = new HashMap();
                             params.put(UPDATE_PROJECT_NUMBER, item.getProjectNumber());
+                            params.put(UPDATE_PROJECT_STATUS, item.getStatus());
                             context.send(JacpFXConfiguration.CENTER_COMPONENT_ID,
                                     new GUIEventMessage()
-                                            .setMessageID(OPEN_PROJECT_UPDATE_FORM_MESSAGE)
+                                            .setMessageID(OPEN_PROJECT_FORM_MESSAGE)
                                             .setParams(params));
                         });
                         setGraphic(hyperlink);
@@ -205,7 +217,7 @@ public class ProjectListComponent implements BaseComponent, Initializable {
                     super.updateItem(item, empty);
                     if (empty) {
                         setGraphic(null);
-                    } else {
+                    } else if (Objects.nonNull(item) && GUIStatusModel.NEW.statusValue.equals(item.getStatus())) {
                         setGraphic(buttonDelete);
                     }
                     buttonDelete.setOnAction(x -> deleteProjects(Collections.singletonList(item.getProjectNumber())));
@@ -237,7 +249,8 @@ public class ProjectListComponent implements BaseComponent, Initializable {
                         if (oldValue && !newValue) {
                             selectedProjects.remove(item);
                         }
-                        lbItemsSelected.setText(GuiUtils.getAndResolveBundleResource(bundle, ITEMS_SELECTED_BUNDLE_ID, String.valueOf(selectedProjects.size())));
+                        lbItemsSelected.setText(GuiUtils.getAndResolveBundleResource(
+                                context.getResourceBundle(), ITEMS_SELECTED_BUNDLE_ID, String.valueOf(selectedProjects.size())));
                     });
                 }
             };
@@ -274,16 +287,16 @@ public class ProjectListComponent implements BaseComponent, Initializable {
 
         if (CollectionUtils.isEmpty(selectedProjects) || containedRestrictedProjects) {
             GuiUtils.showAlert(Alert.AlertType.ERROR,
-                    GuiUtils.getAndResolveBundleResource(bundle, PROJECT_CONTAINED_RESTRICTED_STATUS_MSG_BUNDLE_ID),
-                    GuiUtils.getAndResolveBundleResource(bundle, ERROR_ALERT_TITLE_BUNDLE_ID),
-                    GuiUtils.getAndResolveBundleResource(bundle, ERROR_ALERT_HEADER_BUNDLE_ID));
+                    GuiUtils.getAndResolveBundleResource(context.getResourceBundle(), PROJECT_CONTAINED_RESTRICTED_STATUS_MSG_BUNDLE_ID),
+                    GuiUtils.getAndResolveBundleResource(context.getResourceBundle(), ERROR_ALERT_TITLE_BUNDLE_ID),
+                    GuiUtils.getAndResolveBundleResource(context.getResourceBundle(), ERROR_ALERT_HEADER_BUNDLE_ID));
             return;
         }
         List<Integer> projectNums = selectedProjects.stream().map(GUIProjectTableModel::getProjectNumber).collect(Collectors.toList());
         deleteProjects(projectNums);
     }
 
-    private void loadProjectsData() {
+    public void loadProjectsData() {
         pageProject.setMaxPageIndicatorCount(1);
         pageProject.setPageCount(1);
         pageProject.setCurrentPageIndex(0);

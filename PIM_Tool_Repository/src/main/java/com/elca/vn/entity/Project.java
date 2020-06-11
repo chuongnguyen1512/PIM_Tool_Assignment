@@ -1,18 +1,6 @@
 package com.elca.vn.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,12 +11,7 @@ import java.util.Set;
                 @Index(name = "INDEX_PROJECT_NUM", columnList = "PROJECT_NUMBER", unique = true),
                 @Index(name = "INDEX_COMBINED_PROJECT", columnList = "PROJECT_NUMBER, STATUS", unique = true)
         })
-public class Project {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID", nullable = false, length = 19)
-    private long projectID;
+public class Project extends BaseEntity {
 
     @Column(name = "PROJECT_NUMBER", nullable = false, length = 4, unique = true)
     private int projectNumber;
@@ -48,25 +31,13 @@ public class Project {
     @Column(name = "END_DATE")
     private Date endDate;
 
-    @Column(name = "VERSION", nullable = false, length = 10)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long version;
-
     @ManyToOne
     @JoinColumn(name = "GROUP_ID")
     private Group group;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "PROJECT_EMPLOYEE", joinColumns = {@JoinColumn(name = "PROJECT_ID")}, inverseJoinColumns = {@JoinColumn(name = "EMPLOYEE_ID")})
     private Set<Employee> employees = new HashSet<>();
-
-    public long getProjectID() {
-        return projectID;
-    }
-
-    public void setProjectID(long projectID) {
-        this.projectID = projectID;
-    }
 
     public int getProjectNumber() {
         return projectNumber;
@@ -114,14 +85,6 @@ public class Project {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
-    }
-
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long version) {
-        this.version = version;
     }
 
     public Group getGroup() {

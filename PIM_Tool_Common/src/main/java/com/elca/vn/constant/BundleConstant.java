@@ -10,6 +10,7 @@ public class BundleConstant {
 
     // Component
     public static final String PROJECT_BUTTON_UPDATE_SUBMIT_BUNDLE_ID = "btnUpdateProject";
+    public static final String LABEL_UPDATE_PROJECT_BUNDLE_ID = "lbUpdateProject";
     public static final String ITEMS_SELECTED_BUNDLE_ID = "items_selected";
 
     // Alert
@@ -20,6 +21,7 @@ public class BundleConstant {
 
     // Message
     public static final String PROJECT_EXISTING_SYSTEM_MSG_BUNDLE_ID = "project_existing_message";
+    public static final String PROJECT_NOT_EXIST_SYSTEM_MSG_BUNDLE_ID = "project_not_exist_message";
     public static final String PROJECT_FAIL_SAVING_MSG_BUNDLE_ID = "project_fail_saving_message";
     public static final String PROJECT_SUCCESS_SAVING_MSG_BUNDLE_ID = "project_success_saving_message";
     public static final String PROJECT_CONTAINED_RESTRICTED_STATUS_MSG_BUNDLE_ID = "contained_restricted_projects_message";

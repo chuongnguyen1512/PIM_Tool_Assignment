@@ -36,7 +36,7 @@ public abstract class BaseGRPCService {
             return callingRemoteMethod(request, stub);
         } finally {
             if (Objects.nonNull(channel) && !channel.isShutdown()) {
-                channel.shutdown();
+                channel.shutdownNow();
             }
         }
     }

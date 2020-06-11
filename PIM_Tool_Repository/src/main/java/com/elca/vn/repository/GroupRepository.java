@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 /**
  * Repository class for {@link com.elca.vn.entity.Group}
@@ -13,6 +13,6 @@ import java.util.stream.Stream;
 @Repository
 public interface GroupRepository extends CrudRepository<Group, Long> {
 
-    @Query("SELECT g.groupID, g.groupName FROM Group g")
-    Stream<Object[]> getAllGroups();
+    @Query("SELECT g.id, g.groupName FROM Group g")
+    List<Object[]> getAllGroups();
 }

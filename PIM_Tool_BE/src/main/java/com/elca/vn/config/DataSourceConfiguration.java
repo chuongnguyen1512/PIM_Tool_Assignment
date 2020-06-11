@@ -30,28 +30,25 @@ import static com.elca.vn.config.DataSourceConfiguration.BEAN_MSSQL_PIM_SCHEMA_T
 )
 public class DataSourceConfiguration {
 
-    public static final String[] BASE_PACKAGE = {"com.elca.vn.entity", "com.elca.vn.repository"};
+    private static final String[] BASE_PACKAGE = {"com.elca.vn.entity", "com.elca.vn.repository"};
     public static final String BEAN_MSSQL_PIM_SCHEMA_DATASOURCE = "BEAN_MSSQL_PIM_SCHEMA_DATASOURCE";
     public static final String BEAN_MSSQL_PIM_SCHEMA_ENTITY_MANAGER = "BEAN_MSSQL_PIM_SCHEMA_ENTITY_MANAGER";
     public static final String BEAN_MSSQL_PIM_SCHEMA_TRANSACTION_MANAGER = "BEAN_MSSQL_PIM_SCHEMA_TRANSACTION_MANAGER";
 
-    @Autowired
-    private Environment env;
-
     @Primary
     @Bean(BEAN_MSSQL_PIM_SCHEMA_ENTITY_MANAGER)
-    public LocalContainerEntityManagerFactoryBean pimSchemaEntityManager(@Qualifier(BEAN_MSSQL_PIM_SCHEMA_DATASOURCE) DataSource datasource) {
+    public LocalContainerEntityManagerFactoryBean pimSchemaEntityManager(@Qualifier(BEAN_MSSQL_PIM_SCHEMA_DATASOURCE) DataSource datasource,
+                                                                         @Autowired Environment env) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(datasource);
         em.setPackagesToScan(BASE_PACKAGE);
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
-        Map<String, Object> properties = new HashMap();
-        properties.put("hibernate.hbm2ddl.auto", this.env.getProperty("spring.jpa.hibernate.ddl-auto"));
-        properties.put("hibernate.dialect", this.env.getProperty("spring.jpa.properties.hibernate.dialect"));
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("hibernate.hbm2ddl.auto", env.getProperty("spring.jpa.hibernate.ddl-auto"));
+        properties.put("hibernate.dialect", env.getProperty("spring.jpa.properties.hibernate.dialect"));
         em.setJpaPropertyMap(properties);
-
         return em;
     }
 

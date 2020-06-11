@@ -52,6 +52,7 @@ public class MainPerspective implements FXPerspective {
 
     @Override
     public void handlePerspective(Message<Event, Object> message, PerspectiveLayout perspectiveLayout) {
+        System.out.println();
         // Do nothing
     }
 

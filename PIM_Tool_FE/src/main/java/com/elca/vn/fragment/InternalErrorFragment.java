@@ -1,7 +1,9 @@
 package com.elca.vn.fragment;
 
+import com.elca.vn.component.BaseComponent;
 import com.elca.vn.configuration.JacpFXConfiguration;
 import com.elca.vn.model.GUIEventMessage;
+import com.elca.vn.util.ApplicationBundleUtils;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Font;
 import org.jacpfx.api.annotations.Resource;
 import org.jacpfx.api.annotations.fragment.Fragment;
 import org.jacpfx.api.fragment.Scope;
@@ -35,9 +36,12 @@ import static com.elca.vn.configuration.JacpFXConfiguration.OPEN_PROJECT_LIST_ME
         viewLocation = INTERNAL_ERROR_FRAGMENT_FXML_URL,
         scope = Scope.PROTOTYPE,
         resourceBundleLocation = DEFAULT_RESOURCE_BUNDLE)
-public class InternalErrorFragment implements Initializable {
+public class InternalErrorFragment extends BaseComponent implements Initializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InternalErrorFragment.class);
+
+    @Resource
+    private Context context;
 
     @FXML
     private ImageView imgViewErrorIcon;
@@ -45,13 +49,12 @@ public class InternalErrorFragment implements Initializable {
     @FXML
     private Label lbBackToProjectList;
 
-    @Resource
-    private Context context;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ApplicationBundleUtils.reloadBundle(context, resources);
         try {
-            imgViewErrorIcon.setImage(new Image(new File("src/main/resources/images/error_icon.png").toURI().toURL().toExternalForm()));
+            Image image = new Image(new File("src/main/resources/images/error_icon.png").toURI().toURL().toExternalForm());
+            imgViewErrorIcon.setImage(image);
         } catch (MalformedURLException e) {
             LOGGER.warn("Cannot load error icon");
         }

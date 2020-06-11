@@ -1,5 +1,7 @@
 package com.elca.vn.service;
 
+import com.elca.vn.PIMToolFEApplication;
+import com.elca.vn.configuration.PIMAppConfiguration;
 import com.elca.vn.proto.model.PimProjectCountingRequest;
 import com.elca.vn.proto.model.PimProjectDeleteRequest;
 import com.elca.vn.proto.model.PimProjectPersistRequest;
@@ -7,7 +9,7 @@ import com.elca.vn.proto.model.PimProjectQueryRequest;
 import com.elca.vn.proto.service.BaseProjectServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.stub.AbstractStub;
-import org.springframework.stereotype.Service;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -15,10 +17,10 @@ import java.util.Objects;
 /**
  * RCP Client service communicate using protobuf
  */
-@Service
 public class ProjectGRPCService extends BaseGRPCService {
 
-    public ProjectGRPCService(String serverName, int port) {
+    public ProjectGRPCService(String serverName,
+                              Integer port) {
         super(serverName, port);
     }
 
@@ -41,7 +43,7 @@ public class ProjectGRPCService extends BaseGRPCService {
         }
 
         if (request instanceof PimProjectPersistRequest) {
-            return (O) blockingStub.savingNewProject((PimProjectPersistRequest) request);
+            return (O) blockingStub.savingProject((PimProjectPersistRequest) request);
         }
 
         if (request instanceof PimProjectCountingRequest) {

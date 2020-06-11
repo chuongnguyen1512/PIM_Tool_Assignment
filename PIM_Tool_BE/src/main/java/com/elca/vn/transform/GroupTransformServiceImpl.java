@@ -24,7 +24,7 @@ public class GroupTransformServiceImpl implements BaseTransformService<PimGroup,
             return null;
         }
         Group group = new Group();
-        group.setGroupID(sourceObject.getGroupID());
+        group.setId(sourceObject.getGroupID());
         group.setGroupName(sourceObject.getGroupName());
         return group;
     }
@@ -41,7 +41,7 @@ public class GroupTransformServiceImpl implements BaseTransformService<PimGroup,
             return null;
         }
         return PimGroup.newBuilder()
-                .setGroupID(destinationObject.getGroupID())
+                .setGroupID(destinationObject.getId())
                 .setGroupName(destinationObject.getGroupName())
                 .build();
     }

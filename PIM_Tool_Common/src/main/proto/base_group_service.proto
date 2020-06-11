@@ -10,6 +10,6 @@ import "pim_group.proto";
 
 service BaseGroupService {
 
-  //Stream server group data
-  rpc streamGroupData(com.elca.vn.proto.model.PimGroupRequest) returns (stream com.elca.vn.proto.model.PimGroupResponse) {}
+  // Get all group data
+  rpc getGroupData(com.elca.vn.proto.model.PimGroupRequest) returns (com.elca.vn.proto.model.PimGroupResponse) {}
 }

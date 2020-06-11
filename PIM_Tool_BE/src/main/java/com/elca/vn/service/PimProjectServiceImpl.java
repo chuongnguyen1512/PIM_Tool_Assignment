@@ -10,13 +10,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static com.elca.vn.constant.BundleConstant.EMPLOYEES_NOT_EXIST_SYSTEM_MSG_BUNDLE_ID;
 import static com.elca.vn.constant.BundleConstant.PROJECT_EXISTING_SYSTEM_MSG_BUNDLE_ID;
+import static com.elca.vn.constant.BundleConstant.PROJECT_NOT_EXIST_SYSTEM_MSG_BUNDLE_ID;
 import static com.elca.vn.constant.StylesheetConstant.PAGING_SIZE;
 
 /**
@@ -38,7 +39,8 @@ public class PimProjectServiceImpl implements BasePimDataService<Project> {
     private EmployeeRepository employeeRepository;
 
     @Autowired
-    public PimProjectServiceImpl(ProjectRepository projectRepository, EmployeeRepository employeeRepository) {
+    public PimProjectServiceImpl(ProjectRepository projectRepository,
+                                 EmployeeRepository employeeRepository) {
         this.projectRepository = projectRepository;
         this.employeeRepository = employeeRepository;
     }
@@ -64,6 +66,52 @@ public class PimProjectServiceImpl implements BasePimDataService<Project> {
         if (Objects.nonNull(dbProject)) {
             LOGGER.warn("Project has already existed in system");
             throw new PIMToolException(PROJECT_EXISTING_SYSTEM_MSG_BUNDLE_ID);
+        }
+
+        if (CollectionUtils.isEmpty(project.getEmployees())) {
+            return projectRepository.save(project);
+        }
+
+        // Verify member visas are existing
+        List<String> visaIDs = project.getEmployees().stream().map(Employee::getVisa).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(visaIDs)) {
+            Set<Employee> dbEmployees = employeeRepository.findEmployeeByVisas(visaIDs);
+
+            if (CollectionUtils.isEmpty(dbEmployees)) {
+                LOGGER.warn("Member VISAS are not existing in system");
+                throw new PIMToolException(EMPLOYEES_NOT_EXIST_SYSTEM_MSG_BUNDLE_ID);
+            }
+            project.setEmployees(dbEmployees);
+        }
+
+        return projectRepository.save(project);
+    }
+
+    /**
+     * Updating project data
+     *
+     * @param project project data
+     * @return updated project
+     */
+    @Override
+    public Project updateData(Project project) {
+        if (Objects.isNull(project)) {
+            String errorMsg = "Project is null";
+            LOGGER.warn(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
+        }
+
+        // Finding project
+        Project dbProject = projectRepository.findByProjectNumber(project.getProjectNumber());
+
+        if (Objects.isNull(dbProject)) {
+            LOGGER.warn("Project is not existing in system");
+            throw new PIMToolException(PROJECT_NOT_EXIST_SYSTEM_MSG_BUNDLE_ID);
+        }
+        project.setId(dbProject.getId());
+
+        if (CollectionUtils.isEmpty(project.getEmployees())) {
+            return projectRepository.save(project);
         }
 
         // Verify member visas are existing
@@ -95,26 +143,30 @@ public class PimProjectServiceImpl implements BasePimDataService<Project> {
 
         // Index 0 for content searching, index 1 for status info
         String content = contentSearch[0];
-        String status = contentSearch[1];
+        String status = "";
+
+        if (contentSearch.length > 1) {
+            status = contentSearch[1];
+        }
 
         int projectNum = toNumber(content);
-
         Page<Project> projectsBatch = null;
-        PageRequest page = PageRequest.of(indexPage, PAGING_SIZE);
 
-        if (projectNum > 0) {
+        if (projectNum >= 0) {
             // If content is num, try find with project num first
+            PageRequest page = PageRequest.of(indexPage, PAGING_SIZE, Sort.by("projectNumber").ascending());
             projectsBatch = projectRepository.findByProjectWithProjectNumAndStatus(projectNum, status, page);
 
         }
 
         if (Objects.isNull(projectsBatch) || projectsBatch.isEmpty()) {
+            PageRequest page = PageRequest.of(indexPage, PAGING_SIZE, Sort.by("PROJECT_NUMBER").ascending());
             projectsBatch = projectRepository.findByProjectWithSearchContentAndStatus(content, status, page);
         }
 
         if (Objects.isNull(projectsBatch) || projectsBatch.isEmpty()) {
-            LOGGER.warn("No searching projects have been found in current page", indexPage);
-            return new ArrayList();
+            LOGGER.warn("No searching projects have been found in current page: {}", indexPage);
+            return new ArrayList<>();
         }
 
         return projectsBatch.getContent();
@@ -134,12 +186,12 @@ public class PimProjectServiceImpl implements BasePimDataService<Project> {
             throw new IllegalArgumentException(errorMsg);
         }
 
-        PageRequest page = PageRequest.of(indexPage, PAGING_SIZE);
+        PageRequest page = PageRequest.of(indexPage, PAGING_SIZE, Sort.by("projectNumber").ascending());
         Page<Project> projectsBatch = projectRepository.findAllWithPaging(page);
 
         if (Objects.isNull(projectsBatch) || projectsBatch.isEmpty()) {
-            LOGGER.warn("No searching projects have been found in current page", indexPage);
-            return new ArrayList();
+            LOGGER.warn("No searching projects have been found in current page: {}", indexPage);
+            return new ArrayList<>();
         }
         return projectsBatch.getContent();
     }
@@ -165,7 +217,12 @@ public class PimProjectServiceImpl implements BasePimDataService<Project> {
     }
 
     @Override
-    public Iterator<Project> getData() {
+    public List<Project> getData() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Iterable<Project> getData(List<String> ids) {
         return null;
     }
 
@@ -191,12 +248,17 @@ public class PimProjectServiceImpl implements BasePimDataService<Project> {
         // Set 1 to skip validate for indexPage
         verifySearchingData(1, contentSearch);
 
+        String status = "";
+
+        if (contentSearch.length > 1) {
+            status = contentSearch[1];
+        }
+
         // Index 0 for content searching, index 1 for status info
         String content = contentSearch[0];
-        String status = contentSearch[1];
 
         int projectNum = toNumber(content);
-        if (projectNum > 0) {
+        if (projectNum >= 0) {
             return projectRepository.countProjectsWithProjectNumAndStatus(projectNum, status);
         }
         return projectRepository.countProjectsWithSearchContentAndStatus(content, status);

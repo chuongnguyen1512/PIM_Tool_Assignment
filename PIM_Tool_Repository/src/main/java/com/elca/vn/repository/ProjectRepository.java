@@ -39,7 +39,7 @@ public interface ProjectRepository extends CrudRepository<Project, Long> {
     @Query("SELECT p FROM Project p")
     Page<Project> findAllWithPaging(Pageable pageable);
 
-    @Query("SELECT COUNT(p.projectID) FROM Project p")
+    @Query("SELECT COUNT(p.id) FROM Project p")
     long countAllProjects();
 
     @Query(value = "SELECT COUNT(ID) FROM PIM_PROJECT p " +
@@ -50,7 +50,7 @@ public interface ProjectRepository extends CrudRepository<Project, Long> {
     long countProjectsWithSearchContentAndStatus(String projectNamOrCustomer,
                                                  String status);
 
-    @Query("SELECT COUNT(p.projectID) FROM Project p " +
+    @Query("SELECT COUNT(p.id) FROM Project p " +
             "WHERE p.projectNumber = :projectNum " +
             "AND p.status = :status")
     long countProjectsWithProjectNumAndStatus(@Param("projectNum") int projectNum,

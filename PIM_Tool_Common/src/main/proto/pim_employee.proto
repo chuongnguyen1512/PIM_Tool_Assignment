@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package com.elca.vn.proto.model;
+
+option java_outer_classname = "EmployeeProto";
+option objc_class_prefix = "RTG";
+
+message PimEmployeeQueryRequest {
+    string transactionID = 1;
+    string contentSearch = 2;
+    repeated string visas = 3;
+}
+
+message PimEmployeeQueryResponse {
+    string transactionID = 1;
+    string bundleID = 2;
+    bool isSuccess = 3;
+    repeated PimEmployee employees = 4;
+}
+
+message PimEmployee {
+    string visa = 1;
+    string firstName = 2;
+    string lastName = 3;
+}
